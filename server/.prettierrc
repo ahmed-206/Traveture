@@ -1,6 +1,5 @@
 {
-    "singleQuote": true,
-    "semi": true,
-    "endOfLine": "auto",
-    "plugins": ["@prettier/plugin-pug"]
-  }
+  "singleQuote": true,
+  "semi": true,
+  "endOfLine": "auto"
+}
