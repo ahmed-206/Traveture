@@ -1,5 +1,7 @@
 import mongoose from 'mongoose';
 import validator from 'validator';
+import bcrypt from 'bcryptjs';
+
 const userSchema = new mongoose.Schema({
   name: {
     type: String,
@@ -36,12 +38,28 @@ const userSchema = new mongoose.Schema({
       message: 'Passwords are not the same!',
     },
   },
+  refreshTokenHash: { type: String, select: false },
   active: {
     type: Boolean,
     default: true,
     select: false,
   },
 });
+
+// Hash password before saving
+userSchema.pre('save', async function () {
+  if (!this.isModified('password')) return;
+  this.password = await bcrypt.hash(this.password, 12);
+  this.passwordConfirm = undefined;
+});
+
+// To verify that the password is correct
+userSchema.methods.isPasswordCorrect = async function (
+  candidatePassword,
+  userPassword,
+) {
+  return await bcrypt.compare(candidatePassword, userPassword);
+};
 
 const User = mongoose.model('User', userSchema);
 
