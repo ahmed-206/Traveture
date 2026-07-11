@@ -39,6 +39,7 @@ const userSchema = new mongoose.Schema({
     },
   },
   refreshTokenHash: { type: String, select: false },
+  passwordChangedAt: Date,
   active: {
     type: Boolean,
     default: true,
@@ -59,6 +60,20 @@ userSchema.methods.isPasswordCorrect = async function (
   userPassword,
 ) {
   return await bcrypt.compare(candidatePassword, userPassword);
+};
+
+// To verify the token is old
+userSchema.methods.changedPasswordAfter = function (JWTTimestamp) {
+  if (this.passwordChangedAt) {
+    const changedTimestamp = parseInt(
+      this.passwordChangedAt.getTime() / 1000,
+      10,
+    );
+
+    return JWTTimestamp < changedTimestamp;
+  }
+
+  return false;
 };
 
 const User = mongoose.model('User', userSchema);
