@@ -71,7 +71,10 @@ export const protect = async (req) => {
 
   const currentUser = await User.findById(decoded.id);
   if (!currentUser) {
-    throw new AppError('The user belonging to this token no longer exists.!', 401);
+    throw new AppError(
+      'The user belonging to this token no longer exists.!',
+      401,
+    );
   }
 
   if (currentUser.changedPasswordAfter(decoded.iat)) {
@@ -82,4 +85,45 @@ export const protect = async (req) => {
   }
 
   return currentUser;
+};
+
+export const logout = async (refreshToken) => {
+  try {
+    const decoded = await promisify(jwt.verify)(
+      refreshToken,
+      process.env.JWT_REFRESH_SECRET,
+    );
+    await User.findByIdAndUpdate(decoded.id, {
+      $unset: { refreshTokenHash: 1 },
+    });
+  } catch (error) {
+    return;
+  }
+};
+
+export const refreshTokens = async (currentRefreshToken) => {
+  let decoded;
+  try {
+    decoded = await promisify(jwt.verify)(
+      currentRefreshToken,
+      process.env.JWT_REFRESH_SECRET,
+    );
+  } catch (error) {
+    throw new AppError('Invalid refresh token', 401);
+  }
+
+  const user = await User.findById(decoded.id).select('+refreshTokenHash');
+  const incomingHash = hashToken(currentRefreshToken);
+
+  if (!user || incomingHash !== user.refreshTokenHash) {
+    user.refreshTokenHash = undefined; // مسح الجلسة تماماً لحماية المستخدم
+    await user.save({ validateBeforeSave: false });
+    throw new AppError('Invalid refresh token', 401);
+  }
+
+  const { accessToken, refreshToken } = generateAuthTokens(user._id);
+  user.refreshTokenHash = hashToken(refreshToken);
+  await user.save({ validateBeforeSave: false });
+
+  return { accessToken, refreshToken };
 };
