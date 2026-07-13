@@ -1,8 +1,10 @@
-import User from '../models/userModel.js';
-import { generateAuthTokens, hashToken } from './tokenService.js';
-import AppError from '../utils/appError.js';
 import { promisify } from 'util';
 import jwt from 'jsonwebtoken';
+import crypto from 'crypto';
+import User from '../models/userModel.js';
+import { generateAuthTokens, hashToken } from './tokenService.js';
+import { sendEmail } from './emailService.js';
+import AppError from '../utils/appError.js';
 
 const saveRefreshToken = async (user, refreshToken) => {
   user.refreshTokenHash = hashToken(refreshToken);
@@ -101,6 +103,7 @@ export const logout = async (refreshToken) => {
   }
 };
 
+// Refresh Tokens
 export const refreshTokens = async (currentRefreshToken) => {
   let decoded;
   try {
@@ -126,4 +129,60 @@ export const refreshTokens = async (currentRefreshToken) => {
   await user.save({ validateBeforeSave: false });
 
   return { accessToken, refreshToken };
+};
+
+// Forgot password
+export const forgotPassword = async (userEmail, requestUrl) => {
+  const user = await User.findOne({ email: userEmail.trim().toLowerCase() });
+  if (!user) {
+    return {
+      success: true,
+      message: 'If that email exists, a reset link has been sent.',
+    };
+  }
+  const resetToken = user.createPasswordResetToken();
+  await user.save({ validateBeforeSave: false });
+
+  const resetURL = `${requestUrl}/resetPassword/${resetToken}`;
+  const message = `Forgot your password? Submit the PATCH request with your new password and passwordConfirm
+  to: ${resetURL}./\nIf you didn't forgot your password please ignore this email`;
+
+  try {
+    await sendEmail({
+      email: user.email,
+      subject: 'Your password reset token (valid for 10 min)',
+      message,
+    });
+    return { success: true, message: 'Token sent to email!' };
+  } catch (error) {
+    user.passwordResetToken = undefined;
+    user.passwordResetExpires = undefined;
+    await user.save({ validateBeforeSave: false });
+    throw new AppError(
+      'There was an error sending the email. Try again later.',
+      500,
+    );
+  }
+};
+
+// Resest Password
+
+export const resetPassword = async ({ token, password, passwordConfirm }) => {
+  const hashedToken = crypto.createHash('sha256').update(token).digest('hex');
+
+  const user = await User.findOne({
+    passwordResetToken: hashedToken,
+    passwordResetExpires: { $gt: Date.now() },
+  });
+
+  if (!user) {
+    throw new AppError('Token is invalid or has expired', 400);
+  }
+  user.password = password;
+  user.passwordConfirm = passwordConfirm;
+  user.passwordResetToken = undefined;
+  user.passwordResetExpires = undefined;
+  await user.save();
+
+  return createAuthResponse(user);
 };

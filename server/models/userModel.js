@@ -1,6 +1,7 @@
 import mongoose from 'mongoose';
 import validator from 'validator';
 import bcrypt from 'bcryptjs';
+import crypto from 'crypto';
 
 const userSchema = new mongoose.Schema({
   name: {
@@ -40,6 +41,8 @@ const userSchema = new mongoose.Schema({
   },
   refreshTokenHash: { type: String, select: false },
   passwordChangedAt: Date,
+  passwordResetToken: String,
+  passwordResetExpires: Date,
   active: {
     type: Boolean,
     default: true,
@@ -69,13 +72,22 @@ userSchema.methods.changedPasswordAfter = function (JWTTimestamp) {
       this.passwordChangedAt.getTime() / 1000,
       10,
     );
-
     return JWTTimestamp < changedTimestamp;
   }
-
   return false;
 };
 
+// Generate a password reset code
+userSchema.methods.createPasswordResetToken = function () {
+  const resetToken = crypto.randomBytes(32).toString('hex');
+  this.passwordResetToken = crypto
+    .createHash('sha256')
+    .update(resetToken)
+    .digest('hex');
+
+  this.passwordResetExpires = Date.now() + 10 * 60 * 1000;
+  return resetToken;
+};
 const User = mongoose.model('User', userSchema);
 
 export default User;
