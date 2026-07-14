@@ -7,36 +7,44 @@ import {
 } from '../utils/cookieOptions.js';
 import AppError from '../utils/appError.js';
 
+const sendSuccessResponse = (res, statusCode, message, data = undefined) => {
+  const response = {
+    status: 'success',
+    message,
+  };
+  if (data !== undefined) {
+    response.data = data;
+  }
+
+  return res.status(statusCode).json(response);
+};
+// //////////////////////////////////////////////////////////
+
 export const signup = catchAsync(async (req, res, next) => {
   const { user, accessToken, refreshToken } = await authService.signup(
     req.body,
   );
 
   setAuthCookies(res, accessToken, refreshToken);
-  res.status(201).json({
-    status: 'success',
-    message: 'Account created successfully',
-    data: {
-      user,
-    },
-  });
+  sendSuccessResponse(res, 201, 'Account created successfully', { user });
 });
+
+// //////////////////////////////////////////////////////////
 
 export const login = catchAsync(async (req, res, next) => {
   const { user, accessToken, refreshToken } = await authService.login(req.body);
   setAuthCookies(res, accessToken, refreshToken);
-  res.status(200).json({
-    status: 'success',
-    data: {
-      user,
-    },
-  });
+  sendSuccessResponse(res, 200, 'Logged in successfully', { user });
 });
+
+// //////////////////////////////////////////////////////////
 
 export const protect = catchAsync(async (req, res, next) => {
   req.user = await authService.protect(req);
   next();
 });
+
+// //////////////////////////////////////////////////////////
 
 export const logout = catchAsync(async (req, res, next) => {
   const { refreshToken } = req.cookies;
@@ -44,12 +52,10 @@ export const logout = catchAsync(async (req, res, next) => {
 
   res.clearCookie('accessToken', clearAccessCookie);
   res.clearCookie('refreshToken', clearRefreshCookie);
-  res.status(200).json({
-    status: 'success',
-    message: 'Logged out',
-  });
+  sendSuccessResponse(res, 200, 'Logged out successfully');
 });
 
+// //////////////////////////////////////////////////////////
 export const refresh = catchAsync(async (req, res, next) => {
   const { refreshToken } = req.cookies;
   if (!refreshToken) {
@@ -61,15 +67,16 @@ export const refresh = catchAsync(async (req, res, next) => {
   res.status(200).json({ status: 'success' });
 });
 
+// //////////////////////////////////////////////////////////
+
 export const forgotPassword = catchAsync(async (req, res, next) => {
   const requestUrl = `${req.protocol}://${req.get('host')}`;
   const result = await authService.forgotPassword(req.body.email, requestUrl);
 
-  res.status(200).json({
-    status: 'success',
-    message: result.message,
-  });
+  sendSuccessResponse(res, 200, result.message);
 });
+
+// //////////////////////////////////////////////////////////
 
 export const resetPassword = catchAsync(async (req, res, next) => {
   const { token } = req.params;
@@ -83,9 +90,5 @@ export const resetPassword = catchAsync(async (req, res, next) => {
 
   setAuthCookies(res, accessToken, refreshToken);
 
-  res.status(200).json({
-    status: 'success',
-    message: 'Password reset successfully',
-    data: { user },
-  });
+  sendSuccessResponse(res, 200, 'Password reset successfully', { user });
 });

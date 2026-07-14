@@ -46,7 +46,9 @@ export const login = async (userData) => {
   if (!email || !password) {
     throw new AppError('Please provide email and password', 400);
   }
-  const user = await User.findOne({ email }).select('+password');
+  const user = await User.findOne({ email: email.trim().toLowerCase() }).select(
+    '+password',
+  );
   if (!user || !(await user.isPasswordCorrect(password, user.password))) {
     throw new AppError('Incorrect email or password', 401);
   }
@@ -61,7 +63,7 @@ export const protect = async (req) => {
   }
   if (!token) {
     throw new AppError(
-      'Your are not logged in!, please log in to get access.',
+      "You're not logged in, please log in to get access.",
       401,
     );
   }
@@ -118,7 +120,10 @@ export const refreshTokens = async (currentRefreshToken) => {
   const user = await User.findById(decoded.id).select('+refreshTokenHash');
   const incomingHash = hashToken(currentRefreshToken);
 
-  if (!user || incomingHash !== user.refreshTokenHash) {
+  if (!user) {
+    throw new AppError('Invalid refresh token', 401);
+  }
+  if (incomingHash !== user.refreshTokenHash) {
     user.refreshTokenHash = undefined; // مسح الجلسة تماماً لحماية المستخدم
     await user.save({ validateBeforeSave: false });
     throw new AppError('Invalid refresh token', 401);
@@ -133,12 +138,13 @@ export const refreshTokens = async (currentRefreshToken) => {
 
 // Forgot password
 export const forgotPassword = async (userEmail, requestUrl) => {
+  const genericResponse = {
+    success: true,
+    message: 'If that email exists, a reset link has been sent.',
+  };
   const user = await User.findOne({ email: userEmail.trim().toLowerCase() });
   if (!user) {
-    return {
-      success: true,
-      message: 'If that email exists, a reset link has been sent.',
-    };
+    return genericResponse;
   }
   const resetToken = user.createPasswordResetToken();
   await user.save({ validateBeforeSave: false });
@@ -153,7 +159,7 @@ export const forgotPassword = async (userEmail, requestUrl) => {
       subject: 'Your password reset token (valid for 10 min)',
       message,
     });
-    return { success: true, message: 'Token sent to email!' };
+    return genericResponse;
   } catch (error) {
     user.passwordResetToken = undefined;
     user.passwordResetExpires = undefined;
@@ -166,7 +172,6 @@ export const forgotPassword = async (userEmail, requestUrl) => {
 };
 
 // Resest Password
-
 export const resetPassword = async ({ token, password, passwordConfirm }) => {
   const hashedToken = crypto.createHash('sha256').update(token).digest('hex');
 
