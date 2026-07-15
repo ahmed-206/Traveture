@@ -17,5 +17,6 @@ router.get(
   userController.getUser,
 );
 
+router.route('/').get(userController.getAllUsers);
 router.route('/:id').get(userController.getUser);
 export default router;

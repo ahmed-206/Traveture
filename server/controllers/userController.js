@@ -1,7 +1,7 @@
 import catchAsync from '../utils/catchAsync.js';
 import AppError from '../utils/appError.js';
 import User from '../models/userModel.js';
-
+import * as factory from '../controllers/handlerFactory.js';
 
 export const getMe = async (req, res, next) => {
   req.params.id = req.user.id;
@@ -21,3 +21,5 @@ export const getUser = catchAsync(async (req, res, next) => {
     },
   });
 });
+
+export const getAllUsers = factory.getAll(User);
