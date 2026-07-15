@@ -82,8 +82,19 @@ const tourSchema = new mongoose.Schema({
       day: Number,
     },
   ],
-  guides: {},
-});
+  guides: [
+    {
+      type: mongoose.Schema.ObjectId,
+      ref: 'User',
+    },
+  ],
+  
+},
+{
+  toJSON: { virtuals: true },
+  toObject: { virtuals: true },
+},
+);
 
 const Tour = mongoose.model('Tour', tourSchema);
 export default Tour;

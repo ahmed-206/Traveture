@@ -23,6 +23,23 @@ export const getAll = (Model) =>
     });
   });
 
+export const getOne = (Model, populateOptions) =>
+  catchAsync(async (req, res, next) => {
+    let query = await Model.findById(req.params.id);
+
+    if (populateOptions) query = query.populate(populateOptions);
+    const doc = query;
+    if (!doc) {
+      return next(new AppError('No document found with that ID', 404));
+    }
+    res.status(200).json({
+      status: 'success',
+      data: {
+        doc,
+      },
+    });
+  });
+
 export const createOne = (Model) =>
   catchAsync(async (req, res, next) => {
     const doc = await Model.create(req.body);
