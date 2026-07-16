@@ -5,6 +5,7 @@ import path from 'path';
 import { fileURLToPath } from 'url';
 import Tour from '../models/tourModel.js';
 import User from '../models/userModel.js';
+import Review from '../models/reviewModel.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -24,11 +25,15 @@ const tours = JSON.parse(
 const users = JSON.parse(
   fs.readFileSync(path.join(__dirname, 'users.json'), 'utf-8'),
 );
+const reviews = JSON.parse(
+  fs.readFileSync(path.join(__dirname, 'reviews.json'), 'utf-8'),
+);
 
 const importData = async () => {
   try {
     await Tour.create(tours);
     await User.create(users, { validateBeforeSave: false });
+    await Review.create(reviews);
     console.log('Data successfuly loaded');
   } catch (error) {
     console.log(error);
@@ -39,6 +44,7 @@ const deleteData = async () => {
   try {
     await Tour.deleteMany();
     await User.deleteMany();
+    await Review.deleteMany();
 
     console.log('Data successfuly deleted');
   } catch (error) {

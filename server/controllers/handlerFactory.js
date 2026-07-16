@@ -23,6 +23,7 @@ export const getAll = (Model) =>
     });
   });
 
+
 export const getOne = (Model, populateOptions) =>
   catchAsync(async (req, res, next) => {
     let query = await Model.findById(req.params.id);
@@ -40,6 +41,7 @@ export const getOne = (Model, populateOptions) =>
     });
   });
 
+
 export const createOne = (Model) =>
   catchAsync(async (req, res, next) => {
     const doc = await Model.create(req.body);
@@ -48,6 +50,7 @@ export const createOne = (Model) =>
       data: { doc },
     });
   });
+
 
 export const updateOne = (Model) =>
   catchAsync(async (req, res, next) => {
@@ -66,6 +69,7 @@ export const updateOne = (Model) =>
     });
   });
 
+  
 export const deleteOne = (Model) =>
   catchAsync(async (req, res, next) => {
     const doc = await Model.findByIdAndDelete(req.params.id);
