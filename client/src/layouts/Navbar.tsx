@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { Link } from "react-router-dom";
 
 const Navbar = () => {
   const [isScrolled, setIsScrolled] = useState(false);
@@ -34,12 +35,12 @@ const Navbar = () => {
         </div>
         {/* links */}
         <div className="hidden md:flex items-center gap-6 font-body font-bold">
-          <a
-            href="#home"
+          <Link
+           to='/'
             className="border-b-2 border-transparent hover:border-white pb-1 transition-all"
           >
             Home
-          </a>
+          </Link>
           <a
             href="#destinations"
             className="border-b-2 border-transparent hover:border-white pb-1 transition-all"

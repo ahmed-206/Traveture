@@ -14,6 +14,12 @@
   --color-border: #E6E9EC;
   --color-surface: #FFFFFF;
   --color-bg: #FAFBFC;
+  --color-success:#4CAF4F;
+  --color-error: #FF4B4B;
+  --color-error-light: #FFCCCC;
+  --color-error-mid: #CC0000;
+  --color-error-dark: #990000;
+  --color-warning: #FFC107;
 
   /* Fonts */
   --font-headings: "Plus Jakarta Sans", sans-serif;

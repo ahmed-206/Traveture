@@ -1,5 +1,5 @@
 import { FaArrowRight } from "react-icons/fa6";
-import TourCard from "../ui/TourCard";
+import { TourGrid } from "../../features/tours/components/TourGrid";
 
 const Tours = () => {
   return (
@@ -11,47 +11,7 @@ const Tours = () => {
           </h2>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-          <TourCard
-            image="/img/city/luxor.jpg"
-            title="The Pharaohs' Journey"
-            duration="10-day tour"
-            description="Breathing in Nature in Egypt most spectacular National Parks"
-            location="Cairo, Egypt"
-            date="August 2026"
-            stops="4 Stops"
-            people="15 People"
-            price={1550}
-            rating={4.7}
-            reviews={7}
-          />
-          <TourCard
-            image="/img/city/luxor.jpg"
-            title="The Pharaohs' Journey"
-            duration="10-day tour"
-            description="Breathing in Nature in Egypt most spectacular National Parks"
-            location="Cairo, Egypt"
-            date="August 2026"
-            stops="4 Stops"
-            people="15 People"
-            price={1550}
-            rating={4.7}
-            reviews={7}
-          />
-          <TourCard
-            image="/img/city/luxor.jpg"
-            title="The Pharaohs' Journey"
-            duration="10-day tour"
-            description="Breathing in Nature in Egypt most spectacular National Parks"
-            location="Cairo, Egypt"
-            date="August 2026"
-            stops="4 Stops"
-            people="15 People"
-            price={1550}
-            rating={4.7}
-            reviews={7}
-          />
-        </div>
+          <TourGrid />
       </div>
 
       <div className="flex items-center gap-2 pt-12 text-center justify-center text-body hover:text-primary hover:translate-x-1 transition-all">

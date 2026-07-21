@@ -3,17 +3,17 @@ import Cta from "../components/landing/Cta";
 import Destinations from "../components/landing/Destinations";
 import Hero from "../components/landing/Hero";
 import Tours from "../components/landing/Tours";
-import MainLayout from "../layouts/MainLayout";
+
 
 const Home = () => {
   return (
-    <MainLayout>
-     <Hero />
+    <>
+    <Hero />
      <Destinations />
      <Tours />
      <ChooseUs />
      <Cta />
-    </MainLayout>
+     </>
   );
 };
 
