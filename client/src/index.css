@@ -87,3 +87,26 @@ body {
   padding-left: 24px;
   padding-right: 24px;
 }
+
+
+/* إعطاء مسافة تحت السلايدر عشان النقاط تلاقي مكان تقعد فيه برة الكروت */
+.swiper {
+  padding-bottom: 50px !important;
+}
+
+/* تحريك النقاط لأسفل خارج الكروت */
+.swiper-pagination {
+  bottom: 10px !important;
+}
+
+/* تحسين شكل النقاط ولونها */
+.swiper-pagination-bullet {
+  background: #cbd5e1 !important;
+  opacity: 1 !important;
+}
+
+.swiper-pagination-bullet-active {
+  background: #0ea5e9 !important; /* لون أزرق جذاب متناسق */
+  width: 24px !important;         /* جعل النقطة النشطة بيضاوية الشكل لإعطاء لمسة عصرية */
+  border-radius: 5px !important;
+}

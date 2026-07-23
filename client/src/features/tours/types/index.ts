@@ -1,12 +1,38 @@
 export type TourDifficulty = "easy" | "medium" | "difficult";
 
 export interface Location {
-  type?: string; // e.g. 'Point'
+  _id: string;
+  id?: string;
+  type?: string; //  'Point'
   coordinates?: [number, number]; // [longitude, latitude]
   address?: string;
   description?: string;
   day?: number;
 }
+
+export interface UserGuide {
+  _id: string;
+  name: string;
+  email: string;
+  photo: string;
+  role: "lead-guide" | "guide";
+}
+
+export interface ReviewUser {
+  _id: string;
+  name: string;
+  photo?: string;
+}
+
+export interface Review {
+  _id: string;
+  id?: string;
+  review: string;
+  rating: number;
+  user: ReviewUser;
+  createdAt?: string;
+}
+
 
 export interface Tour {
   _id: string;
@@ -26,7 +52,8 @@ export interface Tour {
   secretTour?: boolean;
   startLocation?: Location;
   locations?: Location[];
-  guides?: string[]; // أو ممكن تكون User[] لو بتعمل populate للـ guides
+  guides?: UserGuide[]; // أو ممكن تكون User[] لو بتعمل populate للـ guides
+  reviews?:Review[];
   __v?: number;
 }
 
@@ -35,6 +62,7 @@ export interface ApiResponse<T> {
   requestedAt?: string;
   results?: number;
   data: {
-    data: T;
+    data?: T;
+    doc?: T;
   };
 }

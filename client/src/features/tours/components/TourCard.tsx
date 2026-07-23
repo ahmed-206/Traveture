@@ -23,7 +23,7 @@ const TourCard = ({ tour }: TourCardProps) => {
     <article className="w-87.5 overflow-hidden rounded-card bg-white shadow-[0_12px_30px_rgba(0,0,0,.08)] transition-all duration-300 hover:-translate-y-2 hover:shadow-[0_18px_40px_rgba(0,0,0,.12)]">
       {/* Image */}
       <div className="h-55 overflow-hidden">
-        <img src={tour.imageCover} alt={tour.name} className="h-full w-full object-cover" />
+        <img src={`http://localhost:3000/img/tours/${tour.imageCover}`} alt={tour.name} className="h-full w-full object-cover" />
       </div>
 
       {/* Content */}

@@ -1,5 +1,5 @@
-import * as factory from './handlerFactory';
-import Review from '../models/reviewModel';
+import * as factory from './handlerFactory.js';
+import Review from '../models/reviewModel.js';
 
 export const getAllReviews = factory.getAll(Review);
 export const getReview = factory.getOne(Review);
