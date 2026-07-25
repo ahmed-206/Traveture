@@ -6,18 +6,8 @@ import {
   clearRefreshCookie,
 } from '../utils/cookieOptions.js';
 import AppError from '../utils/appError.js';
+import sendResponse from '../utils/sendResponse.js';
 
-const sendSuccessResponse = (res, statusCode, message, data = undefined) => {
-  const response = {
-    status: 'success',
-    message,
-  };
-  if (data !== undefined) {
-    response.data = data;
-  }
-
-  return res.status(statusCode).json(response);
-};
 // //////////////////////////////////////////////////////////
 
 export const signup = catchAsync(async (req, res, next) => {
@@ -26,7 +16,7 @@ export const signup = catchAsync(async (req, res, next) => {
   );
 
   setAuthCookies(res, accessToken, refreshToken);
-  sendSuccessResponse(res, 201, 'Account created successfully', { user });
+  sendResponse(res, 201, { message: 'Account created successfully', data: { user } });
 });
 
 // //////////////////////////////////////////////////////////
@@ -34,7 +24,7 @@ export const signup = catchAsync(async (req, res, next) => {
 export const login = catchAsync(async (req, res, next) => {
   const { user, accessToken, refreshToken } = await authService.login(req.body);
   setAuthCookies(res, accessToken, refreshToken);
-  sendSuccessResponse(res, 200, 'Logged in successfully', { user });
+  sendResponse(res, 200, { message: 'Logged in successfully', data: { user } });
 });
 
 // //////////////////////////////////////////////////////////
@@ -52,7 +42,7 @@ export const logout = catchAsync(async (req, res, next) => {
 
   res.clearCookie('accessToken', clearAccessCookie);
   res.clearCookie('refreshToken', clearRefreshCookie);
-  sendSuccessResponse(res, 200, 'Logged out successfully');
+  sendResponse(res, 200, { message: 'Logged out successfully' });
 });
 
 // //////////////////////////////////////////////////////////
@@ -64,7 +54,7 @@ export const refresh = catchAsync(async (req, res, next) => {
 
   const tokens = await authService.refreshTokens(refreshToken);
   setAuthCookies(res, tokens.accessToken, tokens.refreshToken);
-  res.status(200).json({ status: 'success' });
+  sendResponse(res, 200, { message: 'Tokens refreshed successfully' });
 });
 
 // //////////////////////////////////////////////////////////
@@ -73,7 +63,7 @@ export const forgotPassword = catchAsync(async (req, res, next) => {
   const requestUrl = `${req.protocol}://${req.get('host')}`;
   const result = await authService.forgotPassword(req.body.email, requestUrl);
 
-  sendSuccessResponse(res, 200, result.message);
+  sendResponse(res, 200, { message: result.message });
 });
 
 // //////////////////////////////////////////////////////////
@@ -90,7 +80,7 @@ export const resetPassword = catchAsync(async (req, res, next) => {
 
   setAuthCookies(res, accessToken, refreshToken);
 
-  sendSuccessResponse(res, 200, 'Password reset successfully', { user });
+  sendResponse(res, 200, { message: 'Password reset successfully', data: { user } });
 });
 
 export const restrictTo =

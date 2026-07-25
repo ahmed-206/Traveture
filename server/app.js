@@ -7,6 +7,8 @@ import tourRoutes from './routes/tourRoutes.js';
 import reviewRoutes from './routes/reviewRoutes.js';
 import path from 'path';
 import { fileURLToPath } from 'url';
+import AppError from './utils/appError.js';
+import globalErrorHandler from './middleware/errorHandler.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -28,4 +30,13 @@ app.use(express.json());
 app.use('/api/v1/users', userRoutes);
 app.use('/api/v1/tours', tourRoutes);
 app.use('/api/v1/reviews', reviewRoutes);
+
+
+app.all('/{*any}', (req, res, next) => {
+  next(new AppError(`Can't find ${req.originalUrl} on this server!`, 404));
+});
+
+
+app.use(globalErrorHandler);
+
 export default app;

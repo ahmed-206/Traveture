@@ -1,6 +1,7 @@
 import catchAsync from '../utils/catchAsync.js';
 import AppError from '../utils/appError.js';
 import APIFeatures from '../utils/apiFeatures.js';
+import sendResponse from '../utils/sendResponse.js';
 
 export const getAll = (Model) =>
   catchAsync(async (req, res, next) => {
@@ -13,14 +14,7 @@ export const getAll = (Model) =>
       .pagination();
 
     const docs = await features.query;
-    res.status(200).json({
-      status: 'success',
-      requestedAt: req.requestTime,
-      results: docs.length,
-      data: {
-        data: docs,
-      },
-    });
+    sendResponse(res, 200, { data: docs, results: docs.length });
   });
 
 
@@ -33,22 +27,14 @@ export const getOne = (Model, populateOptions) =>
     if (!doc) {
       return next(new AppError('No document found with that ID', 404));
     }
-    res.status(200).json({
-      status: 'success',
-      data: {
-        doc,
-      },
-    });
+    sendResponse(res, 200, { data: doc });
   });
 
 
 export const createOne = (Model) =>
   catchAsync(async (req, res, next) => {
     const doc = await Model.create(req.body);
-    res.status(201).json({
-      status: 'success',
-      data: { doc },
-    });
+    sendResponse(res, 201, { data: doc });
   });
 
 
@@ -61,12 +47,7 @@ export const updateOne = (Model) =>
     if (!doc) {
       return next(new AppError('No document found with that ID', 404));
     }
-    res.status(200).json({
-      status: 'success',
-      data: {
-        doc,
-      },
-    });
+    sendResponse(res, 200, { data: doc });
   });
 
   
@@ -77,8 +58,5 @@ export const deleteOne = (Model) =>
       return next(new AppError('No document found with that ID', 404));
     }
     // 204 => means no content
-    res.status(204).json({
-      status: 'success',
-      data: null,
-    });
+    sendResponse(res, 204);
   });
