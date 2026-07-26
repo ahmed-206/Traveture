@@ -57,12 +57,3 @@ export interface Tour {
   __v?: number;
 }
 
-export interface ApiResponse<T> {
-  status: string;
-  requestedAt?: string;
-  results?: number;
-  data: {
-    data?: T;
-    doc?: T;
-  };
-}

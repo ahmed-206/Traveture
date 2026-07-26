@@ -3,6 +3,9 @@ import MainLayout from "../layouts/MainLayout";
 import Home from "../pages/HomePage";
 import ToursPage from "../features/tours/pages/ToursPage";
 import ToursDetails from "../features/tours/pages/TourDetails";
+import { LoginPage } from "../pages/Login";
+import NotFound from "../pages/NotFound";
+import { SignupPage } from "../pages/Signup";
 
 const router = createBrowserRouter([
   {
@@ -22,6 +25,19 @@ const router = createBrowserRouter([
         element: <ToursDetails />,
       },
     ],
+  },
+  
+  {
+    path: "login",
+    element: <LoginPage />
+  },
+  {
+    path: "signup",
+    element: <SignupPage/>
+  },
+  {
+    path: "*",
+    element: <NotFound />,
   },
 ]);
 
