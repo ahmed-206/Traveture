@@ -57,3 +57,9 @@ export interface Tour {
   __v?: number;
 }
 
+export interface ToursQuery {
+  page?: number;
+  limit?: number;
+  sort?: string;
+  filter?:string;
+}

@@ -10,7 +10,7 @@ const Hero = () => {
 
       {/* Content */}
       <div className="relative z-10 max-w-225 px-4">
-        <h1 className="font-headings text-5xl md:text-[84px] font-extrabold uppercase tracking-tight leading-none text-white ">
+        <h1 className="font-headings text-5xl md:text-[140px] font-extrabold uppercase tracking-tight leading-none text-white ">
           Traveture
         </h1>
         <p className="mt-4 font-body text-lg md:text-2xl font-light opacity-90 tracking-wide text-white">

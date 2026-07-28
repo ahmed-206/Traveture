@@ -3,13 +3,14 @@ import { logout } from "../api/authApi";
 import toast from "react-hot-toast";
 import { AxiosError } from "axios";
 import type { ApiErrorResponse } from "../../../api/api.types";
+import { authKeys } from "../authKeys";
 
 export const useLogout = () => {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: logout,
     onSuccess: () => {
-      queryClient.setQueryData(["me"], null);
+      queryClient.setQueryData(authKeys.me, null);
 
       toast.success("Logged out successfully.");
     },

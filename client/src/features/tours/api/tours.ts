@@ -1,9 +1,11 @@
 import api from "../../../api/axios";
 import type { ApiSuccessResponse } from "../../../api/api.types";
-import type { Tour } from "../types/index";
+import type { Tour, ToursQuery } from "../types/index";
 
-export const getAllTours = async (): Promise<Tour[]> => {
-  const response = await api.get<ApiSuccessResponse<Tour[]>>("/tours");
+export const getAllTours = async (params?: ToursQuery): Promise<Tour[]> => {
+  const response = await api.get<ApiSuccessResponse<Tour[]>>("/tours", {
+    params,
+  });
   return response.data.data;
 };
 

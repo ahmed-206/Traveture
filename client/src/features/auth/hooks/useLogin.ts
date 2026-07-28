@@ -4,6 +4,7 @@ import { toast } from "react-hot-toast";
 
 import type { AxiosError } from "axios";
 import type { ApiErrorResponse } from "../../../api/api.types";
+import { authKeys } from "../authKeys";
 
 export const useLogin = () => {
   const queryClient = useQueryClient();
@@ -11,7 +12,7 @@ export const useLogin = () => {
     mutationFn: login,
     onSuccess: (user) => {
       toast.success("Logged in successfully.");
-      queryClient.setQueryData(["me"], user);
+      queryClient.setQueryData(authKeys.me, user);
     },
     onError: (error: AxiosError<ApiErrorResponse>) => {
       toast.error(error.response?.data.message || "Something went wrong");

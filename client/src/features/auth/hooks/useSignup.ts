@@ -4,6 +4,7 @@ import { signup } from "../api/authApi";
 import toast from "react-hot-toast";
 import type { AxiosError } from "axios";
 import type { ApiErrorResponse } from "../../../api/api.types";
+import { authKeys } from "../authKeys";
 
 export const useSignup = () => {
     const navigate = useNavigate();
@@ -12,7 +13,7 @@ export const useSignup = () => {
     mutationFn: signup,
     onSuccess: () => {
         queryClient.invalidateQueries({
-        queryKey: ["me"],
+        queryKey: authKeys.me,
       });
       toast.success("Account created successfully");
       navigate("/");
