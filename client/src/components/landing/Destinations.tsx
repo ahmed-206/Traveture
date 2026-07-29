@@ -45,7 +45,7 @@ const Destinations = () => {
     },
   ];
   return (
-    <section className="pt-36 pb-24 px-6 bg-neutral-bg">
+    <section className="pt-24 pb-24 px-6 bg-neutral-bg">
       <div className="max-w-300 mx-auto">
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-12 gap-6">
           <h2 className="text-4xl font-bold font-headings text-heading mt-3 tracking-tight">

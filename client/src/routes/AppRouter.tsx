@@ -1,13 +1,13 @@
 import { RouterProvider, createBrowserRouter } from "react-router-dom";
 import MainLayout from "../layouts/MainLayout";
 import Home from "../pages/HomePage";
-import ToursPage from "../features/tours/pages/AllTours";
 import ToursDetails from "../features/tours/pages/TourDetails";
 import { LoginPage } from "../pages/Login";
 import NotFound from "../pages/NotFound";
 import { SignupPage } from "../pages/Signup";
 import ProtectRoute from "../components/auth/ProtectedRoute";
 import ProfilePage from "../pages/Profile";
+import AllTours from "../features/tours/pages/AllTours";
 
 const router = createBrowserRouter([
   {
@@ -20,12 +20,13 @@ const router = createBrowserRouter([
       },
       {
         path: "tours",
-        element: <ToursPage />,
+        element: <AllTours />,
       },
       {
         path: "tours/:tourId",
         element: <ToursDetails />,
       },
+  
     ],
   },
 

@@ -1,5 +1,6 @@
 import { FaArrowRight } from "react-icons/fa6";
 import { TourGrid } from "../../features/tours/components/TourGrid";
+import { Link } from "react-router-dom";
 
 const Tours = () => {
   return (
@@ -15,7 +16,7 @@ const Tours = () => {
       </div>
 
       <div className="flex items-center gap-2 pt-12 text-center justify-center text-body hover:text-primary hover:translate-x-1 transition-all">
-        <a href="#">View All Tours</a>
+        <Link to="/tours">View All Tours</Link>
         <FaArrowRight />
       </div>
     </section>

@@ -5,6 +5,7 @@ export interface ApiSuccessResponse<T> {
   status: 'success';
   message?: string;
   results?: number;
+  totalCount?: number;
   data: T;
 }
 

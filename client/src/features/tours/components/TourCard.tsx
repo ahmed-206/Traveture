@@ -76,7 +76,7 @@ const TourCard = ({ tour }: TourCardProps) => {
           </div>
 
           <Link
-            to={`tours/${tour._id}`}
+            to={`/tours/${tour._id}`}
             className="cursor-pointer rounded-input bg-primary px-6 py-3 font-body text-[17px] font-semibold text-white transition-all duration-300 hover:bg-primary-700"
           >
             View details

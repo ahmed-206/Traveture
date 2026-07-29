@@ -56,12 +56,12 @@ const Navbar = () => {
           >
             Destinations
           </a>
-          <a
-            href="#tours"
+          <Link
+            to="tours"
             className="border-b-2 border-transparent hover:border-white pb-1 transition-all"
           >
             Tours
-          </a>
+          </Link>
           <a
             href="#about"
             className="border-b-2 border-transparent hover:border-white pb-1 transition-all"

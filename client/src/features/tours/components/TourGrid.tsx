@@ -1,10 +1,10 @@
 import TourCard from "./TourCard";
 import { TourSkeleton } from "./TourSkeleton";
 import { TourErrorState } from "./TourErrorState";
-import { useTours } from "../hooks/useTours";
+import { useFeaturedTours } from "../hooks/useFeaturedTours";
 
 export const TourGrid = () => {
-  const { data: tours, error, isError, isLoading, refetch } = useTours();
+  const { data: tours, error, isError, isLoading, refetch } = useFeaturedTours();
 
   if (isLoading) {
     return (

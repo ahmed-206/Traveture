@@ -61,5 +61,15 @@ export interface ToursQuery {
   page?: number;
   limit?: number;
   sort?: string;
-  filter?:string;
+  "duration[gte]"?: number;
+  "duration[lte]"?: number;
+  "price[gte]"?: number;
+  "price[lte]"?: number;
+  "ratingsAverage[gte]"?: number;
+  
+}
+
+export interface ToursResponse {
+  tours: Tour[];
+  totalCount: number;
 }
