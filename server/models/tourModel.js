@@ -1,5 +1,5 @@
 import mongoose from 'mongoose';
-
+import  slugify  from 'slugify';
 const tourSchema = new mongoose.Schema(
   {
     name: {
@@ -100,6 +100,10 @@ tourSchema.virtual('reviews', {
   ref: 'Review',
   foreignField: 'tour',
   localField: '_id',
+});
+
+tourSchema.pre('save', function () {
+  this.slug = slugify(this.name, { lower: true });
 });
 
 tourSchema.pre(/^find/, function () {

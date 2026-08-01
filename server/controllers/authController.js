@@ -60,7 +60,7 @@ export const refresh = catchAsync(async (req, res, next) => {
 // //////////////////////////////////////////////////////////
 
 export const forgotPassword = catchAsync(async (req, res, next) => {
-  const requestUrl = `${req.protocol}://${req.get('host')}`;
+  const requestUrl = process.env.CLIENT_URL;
   const result = await authService.forgotPassword(req.body.email, requestUrl);
 
   sendResponse(res, 200, { message: result.message });

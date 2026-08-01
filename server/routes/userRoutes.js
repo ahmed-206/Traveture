@@ -1,6 +1,10 @@
 import express from 'express';
 import * as authController from '../controllers/authController.js';
 import * as userController from '../controllers/userController.js';
+import {
+  resizeUserPhoto,
+  uploadUserPhoto,
+} from '../middleware/uploadUserPhoto.js';
 const router = express.Router();
 
 // Public routes
@@ -14,6 +18,12 @@ router.patch('/resetPassword/:token', authController.resetPassword);
 // Protect routes
 router.use(authController.protect);
 router.get('/me', userController.getMe, userController.getUser);
+router.patch(
+  '/updateMe',
+  uploadUserPhoto,
+  resizeUserPhoto,
+  userController.UpdateMyProfile,
+);
 
 // Only admin routes
 router.use(authController.restrictTo('admin'));
@@ -23,6 +33,5 @@ router
   .get(userController.getUser)
   .patch(userController.updateUser)
   .delete(userController.deleteUser);
-
 
 export default router;

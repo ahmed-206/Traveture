@@ -151,7 +151,11 @@ export const forgotPassword = async (userEmail, requestUrl) => {
 
   const resetURL = `${requestUrl}/resetPassword/${resetToken}`;
   const message = `Forgot your password? Submit the PATCH request with your new password and passwordConfirm
-  to: ${resetURL}./\nIf you didn't forgot your password please ignore this email`;
+  to:
+
+  ${resetURL}
+  
+  If you didn't forgot your password please ignore this email`;
 
   try {
     await sendEmail({
@@ -191,5 +195,3 @@ export const resetPassword = async ({ token, password, passwordConfirm }) => {
 
   return createAuthResponse(user);
 };
-
-

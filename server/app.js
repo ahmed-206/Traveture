@@ -15,6 +15,8 @@ const __dirname = path.dirname(__filename);
 const app = express();
 
 
+app.set("query parser", "extended");
+
 app.use(express.static(path.join(__dirname, 'public')));
 if (process.env.NODE_ENV === 'development') {
   app.use(morgan('dev'));

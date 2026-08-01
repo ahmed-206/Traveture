@@ -7,6 +7,14 @@ export const getAll = (Model) =>
   catchAsync(async (req, res, next) => {
     let filter = {};
     if (req.params.tourId) filter = { tour: req.params.tourId };
+
+    const countFeatures = new APIFeatures(
+      Model.find(filter),
+      req.query,
+    ).filter();
+    const totalCount = await Model.countDocuments(
+      countFeatures.query.getFilter(),
+    );
     const features = new APIFeatures(Model.find(filter), req.query)
       .filter()
       .sort()
@@ -14,13 +22,12 @@ export const getAll = (Model) =>
       .pagination();
 
     const docs = await features.query;
-    sendResponse(res, 200, { data: docs, results: docs.length });
+    sendResponse(res, 200, { data: docs, results: docs.length, totalCount });
   });
-
 
 export const getOne = (Model, populateOptions) =>
   catchAsync(async (req, res, next) => {
-    let query =  Model.findById(req.params.id);
+    let query = Model.findById(req.params.id);
 
     if (populateOptions) query = query.populate(populateOptions);
     const doc = await query;
@@ -30,13 +37,11 @@ export const getOne = (Model, populateOptions) =>
     sendResponse(res, 200, { data: doc });
   });
 
-
 export const createOne = (Model) =>
   catchAsync(async (req, res, next) => {
     const doc = await Model.create(req.body);
     sendResponse(res, 201, { data: doc });
   });
-
 
 export const updateOne = (Model) =>
   catchAsync(async (req, res, next) => {
@@ -50,7 +55,6 @@ export const updateOne = (Model) =>
     sendResponse(res, 200, { data: doc });
   });
 
-  
 export const deleteOne = (Model) =>
   catchAsync(async (req, res, next) => {
     const doc = await Model.findByIdAndDelete(req.params.id);
