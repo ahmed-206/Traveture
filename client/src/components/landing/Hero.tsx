@@ -4,7 +4,7 @@ const Hero = () => {
   return (
     <section
       className="relative  ml-[calc(-50vw+50%)] min-h-screen bg-cover bg-center flex flex-col justify-center items-center text-center px-6 text-white  z-10"
-      style={{ backgroundImage: `url('/img/bg.jpg')` }}
+      style={{ backgroundImage: `url('/img/cover.png')` }}
     >
       {/* Content */}
       <div className="relative z-10 max-w-225 px-4">

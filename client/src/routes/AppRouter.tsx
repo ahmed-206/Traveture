@@ -8,6 +8,8 @@ import { SignupPage } from "../pages/Signup";
 import ProtectRoute from "../components/auth/ProtectedRoute";
 import ProfilePage from "../pages/Profile";
 import AllTours from "../features/tours/pages/AllTours";
+import ForgotPassword from "../pages/ForgotPassword";
+import ResetPassword from "../pages/ResetPassword";
 
 const router = createBrowserRouter([
   {
@@ -37,6 +39,14 @@ const router = createBrowserRouter([
   {
     path: "signup",
     element: <SignupPage />,
+  },
+  {
+    path: "forgot-password",
+    element: <ForgotPassword />
+  },
+  {
+    path: "resetPassword/:token",
+    element: <ResetPassword />
   },
   {
     path: "*",
