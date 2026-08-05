@@ -1,13 +1,13 @@
-import { useState, useRef } from "react";
+import { useState } from "react";
 import { Input } from "../components/ui/Input";
 import { Button } from "../components/ui/Button";
+import { AccountSettings } from "../features/profile/components/AccountSettings";
 
 
 
 const ProfilePage = () => {
   const [activeTab, setActiveTab] = useState("settings");
-  // const [photoPreview, setPhotoPreview] = useState<string | null>(null);
-  const fileInputRef = useRef<HTMLInputElement>(null);
+  // const fileInputRef = useRef<HTMLInputElement>(null);
 
 
 
@@ -44,58 +44,7 @@ const ProfilePage = () => {
         {/* Main Content Area (Right Panel) */}
         <div className="flex-1 p-8 sm:p-12 lg:p-16 space-y-12">
           {/*  Your Account */}
-          <section>
-            <h2 className="text-2xl sm:text-3xl font-bold text-heading mb-8">
-              Your account
-            </h2>
-
-            <form
-             
-              className="space-y-6 max-w-lg"
-            >
-              {/* Name */}
-              <Input
-                type="text"
-                label="Name"
-              />
-
-              {/* Email address */}
-              <Input
-                type="email"
-                label="Email address"
-              />
-
-              {/* Photo Upload */}
-              <div className="flex items-center gap-4 pt-2">
-                <div className="w-14 h-14 rounded-full bg-gray-400 overflow-hidden shrink-0 border border-gray-200">
-              
-                </div>
-
-                <input
-                  type="file"
-                  accept="image/*"
-                  ref={fileInputRef}
-                 
-                  className="hidden"
-                />
-
-                <button
-                  type="button"
-                  onClick={() => fileInputRef.current?.click()}
-                  className="text-sm font-medium text-primary hover:bg-primary hover:text-white hover:px-1.5 hover:py-3 duration-300 transition-all cursor-pointer"
-                >
-                  Choose new photo
-                </button>
-              </div>
-
-              {/* Save Settings Button */}
-              <div className="flex justify-end pt-4">
-                <Button type="submit">
-                  Save Settings
-                </Button>
-              </div>
-            </form>
-          </section>
+          <AccountSettings />
 
           <hr className="border-body/30" />
 

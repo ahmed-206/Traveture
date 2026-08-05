@@ -72,11 +72,13 @@ const Navbar = () => {
         {/* buttons */}
         {user ? (
           <div className="flex items-center gap-4 font-body font-semibold">
+            <Link to="profile">
             <img
               src={`http://localhost:3000/img/users/${user.photo}`}
               alt={user.name}
               className="w-10 h-10 rounded-full object-cover"
             />
+            </Link>
 
             <button onClick={() => logout()}
             className="px-4 py-1.5  backdrop-blur-md border rounded-input hover:bg-error hover:text-white transition-all cursor-pointer">

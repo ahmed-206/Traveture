@@ -16,8 +16,8 @@ const Hero = () => {
           alt="Traveture Logo"
           className="w-48 md:w-164 h-auto object-contain"
         />
-        <p className="mt-4 font-body text-lg md:text-2xl font-light opacity-90 tracking-wide text-white">
-          Discover Egypt Like Never Before
+        <p className="mt-4 font-body text-lg md:text-3xl font-medium opacity-90 tracking-wide text-white">
+          Travel and Adventure
         </p>
       </div>
 
