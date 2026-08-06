@@ -1,3 +1,4 @@
+import { Link } from "react-router-dom";
 import DestinationCard from "../ui/DestinationCard";
 const Destinations = () => {
   const destinationsData = [
@@ -55,11 +56,13 @@ const Destinations = () => {
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
           {destinationsData.map((destination) => (
+            <Link to={`/tours?destination=${destination.title}`}>
             <DestinationCard
               key={destination.id}
               title={destination.title}
               imageSrc={destination.imageSrc}
             />
+            </Link>
           ))}
         </div>
       </div>

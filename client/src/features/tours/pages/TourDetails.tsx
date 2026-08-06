@@ -1,4 +1,4 @@
-import { TourDetailSkeleton } from "../components/TourDetailSkeleton";
+import { TourDetailSkeleton } from "../components/loadingState/TourDetailSkeleton";
 import { TourErrorState } from "../components/TourErrorState";
 import TourHero from "../sections/TourHero";
 import TourInfo from "../sections/TourInfo";

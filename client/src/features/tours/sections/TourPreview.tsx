@@ -40,7 +40,7 @@ export const TourPreview = ({ tour, onBookTour }: TourPreviewProps) => {
       <TourMap tour={tour} />
       <TourReviews tour={tour}/>
       <div className="bg-bg py-16 px-4">
-        <div className="bg-surface rounded-card p-8 sm:p-14 text-center max-w-5xl mx-auto shadow-sm border border-primary-light/20">
+        <div className=" p-8 sm:p-14 text-center max-w-5xl mx-auto ">
           <h2 className="text-2xl sm:text-4xl md:text-3xl font-extrabold text-primary tracking-tight mb-4">
             What are you waiting for?
           </h2>

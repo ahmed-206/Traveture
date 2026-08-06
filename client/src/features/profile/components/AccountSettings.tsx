@@ -5,7 +5,7 @@ import { useForm } from "react-hook-form";
 import {
   updateProfileSchema,
   type UpdateProfileData,
-} from "../../auth/validation/authSchema";
+} from "../validation/profileSchema";
 import { useMe } from "../../auth/hooks/useMe";
 import { useUpdateProfile } from "../hooks/useUpdateProfile";
 import { zodResolver } from "@hookform/resolvers/zod";

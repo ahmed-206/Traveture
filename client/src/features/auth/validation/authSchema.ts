@@ -42,17 +42,9 @@ export const resetPasswordSchema = z
     path: ["passwordConfirm"],
   });
 
-export const updateProfileSchema = z.object({
-  name: z
-    .string()
-    .min(3, "Name must be at least 3 characters.")
-    .max(40, "Name must be less than 40 characters."),
 
-  email: z.email("Please enter a valid email address."),
-});
 
 export type LoginData = z.infer<typeof loginSchema>;
 export type SignupData = z.infer<typeof signupSchema>;
 export type ForgotPasswordData = z.infer<typeof forgotPasswordSchema>;
 export type ResetPasswordData = z.infer<typeof resetPasswordSchema>;
-export type UpdateProfileData  = z.infer<typeof updateProfileSchema>;

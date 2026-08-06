@@ -1,19 +1,14 @@
 import { useState } from "react";
-import { Input } from "../components/ui/Input";
-import { Button } from "../components/ui/Button";
 import { AccountSettings } from "../features/profile/components/AccountSettings";
+import { PasswordSettings } from "../features/profile/components/PasswordSettings";
 
 
 
 const ProfilePage = () => {
   const [activeTab, setActiveTab] = useState("settings");
-  // const fileInputRef = useRef<HTMLInputElement>(null);
-
-
-
 
   return (
-    <div className="min-h-screen bg-[#E5E7EB] py-12 px-4 flex justify-center items-center">
+    <div className="min-h-screen bg-bg py-12 px-4 flex justify-center items-center">
       {/* Container Card */}
       <div className="bg-white w-full max-w-5xl rounded-card shadow-lg flex flex-col md:flex-row overflow-hidden min-h-175">
         {/* Side Navigation (Left Panel) */}
@@ -41,52 +36,12 @@ const ProfilePage = () => {
           </ul>
         </nav>
 
-        {/* Main Content Area (Right Panel) */}
         <div className="flex-1 p-8 sm:p-12 lg:p-16 space-y-12">
           {/*  Your Account */}
           <AccountSettings />
-
           <hr className="border-body/30" />
-
           {/* Password Change */}
-          <section>
-            <h2 className="text-2xl sm:text-3xl font-bold text-heading mb-8">
-              Password change
-            </h2>
-
-            <form
-              
-              className="space-y-6 max-w-lg"
-            >
-              {/* Current Password */}
-              <Input
-                type="password"
-                label="Current password"
-                placeholder="••••••••"
-              />
-
-              {/* New Password */}
-              <Input
-                type="password"
-                label="New password"
-                placeholder="••••••••"
-              />
-
-              {/* Confirm Password */}
-              <Input
-                type="password"
-                label="Confirm password"
-                placeholder="••••••••"
-              />
-
-              {/* Save Password Button */}
-              <div className="flex justify-end pt-4">
-                <Button type="submit">
-                  Save Password
-                </Button>
-              </div>
-            </form>
-          </section>
+          <PasswordSettings />
         </div>
       </div>
     </div>

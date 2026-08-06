@@ -5,7 +5,7 @@ import {
   FaUsers,
 } from "react-icons/fa6";
 import { Link } from "react-router-dom";
-import { type Tour } from "../types";
+import { type Tour } from "../../types/index";
 
 interface TourCardProps {
   tour: Tour;

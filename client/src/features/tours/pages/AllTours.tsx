@@ -1,21 +1,25 @@
 import { useState } from "react";
-import TourCard from "../components/TourCardHorizental";
+import { useSearchParams } from "react-router-dom";
+import TourCard from "../components/cards/TourCardHorizental";
 import { FaFilter, FaSortAmountDown } from "react-icons/fa";
 import heroCover from "/img/toursHero.jpg";
 import { useTours } from "../hooks/useTours";
-import { AllToursSkeleton } from "../components/AllToursSkeleton";
+import { AllToursSkeleton } from "../components/loadingState/AllToursSkeleton";
 import { DURATION_MAP, DESTINATIONS, PRICE_MAP, SORT_MAP} from "../constants/filters";
 
 const LIMIT = 5;
 
 const AllTours = () => {
+  const [searchParams] = useSearchParams();
+  const destinationFromUrl = searchParams.get('destination')
   const [page, setPage] = useState(1);
-  const [destination, setDestination] = useState(null);
+  const [destination, setDestination] = useState(destinationFromUrl);
   const [duration, setDuration] = useState(null);
   const [price, setPrice] = useState(null);
   const [rating, setRating] = useState(null);
   const [sortLabel, setSortLabel] = useState("Most Popular");
 
+  
   const filters = {
     ...(destination && {
       "startLocation.description[regex]": destination,

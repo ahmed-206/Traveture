@@ -1,5 +1,5 @@
-import TourCard from "./TourCard";
-import { TourSkeleton } from "./TourSkeleton";
+import TourCard from "./cards/TourCard";
+import { TourSkeleton } from "./loadingState/TourSkeleton";
 import { TourErrorState } from "./TourErrorState";
 import { useFeaturedTours } from "../hooks/useFeaturedTours";
 

@@ -11,13 +11,11 @@ const Footer = () => {
   return (
     <footer className="mt-0">
       {/* Main Footer */}
-      <div className="bg-primary-dark text-white">
+      <div className="bg-primary-dark text-white px-4 md:px-6 mx-auto">
         <div className="container mx-auto">
-          <div className="grid grid-cols-1 md:grid-cols-[1.2fr_auto_1fr_auto_1fr] gap-12 py-14">
-            {/* Logo */}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 py-14">   
             <div>
             <img src="img/logo-white.png" alt="traveture logo" width={148} height={148}/>
-
               <div className="flex items-center gap-4 mt-8">
                 {[FaFacebookF, FaInstagram, FaXTwitter, FaLinkedinIn].map(
                   (Icon, index) => (
@@ -33,16 +31,15 @@ const Footer = () => {
               </div>
             </div>
 
-            {/* Divider */}
-            <div className="hidden md:block w-px h-44 bg-white/30" />
+           
 
             {/* Links */}
             <div>
-              <h3 className="font-headings text-2xl font-bold mb-6">
+              <h3 className="font-headings  text-2xl font-bold mb-6">
                 Quick links
               </h3>
 
-              <ul className="space-y-3  font-medium">
+              <ul className="space-y-3 text-white/60 font-medium">
                 <li className="hover:translate-x-1 transition-all duration-300">
                   <a href="#">
                     Home
@@ -69,8 +66,7 @@ const Footer = () => {
               </ul>
             </div>
 
-            {/* Divider */}
-            <div className="hidden md:block w-px h-44 bg-white/30" />
+            
 
             {/* Contact */}
             <div>
@@ -78,25 +74,25 @@ const Footer = () => {
                 Need help?
               </h3>
 
-              <div className="space-y-3 text-lg font-medium">
+              <div className="space-y-3 text-white/60 text-lg font-medium">
                 <div className="flex items-center gap-2 mt-8 hover:translate-x-1 transition-all duration-300">
-                <FaPhone size={14} className="text-white"/>
+                <FaPhone size={14} className="text-white/60"/>
                 <p>01200025102</p>
                 </div>
                 <div className="flex items-center gap-2 mt-8 hover:translate-x-1 transition-all duration-300">
-                <FaEnvelope size={14} className="text-white"/>
+                <FaEnvelope size={14} className="text-white/60"/>
                 <p>info@traveture.com</p>
                 </div>
               </div>
             </div>
           </div>
         </div>
+        <div className="bg-primary-dark py-2 border-t border-white/10 text-center text-white font-semibold">
+          © 2026 Traveture.com – All rights reserved
+        </div>
       </div>
 
-      {/* Copyright */}
-      <div className="bg-primary py-4 text-center text-white font-semibold">
-        © 2026 Traveture.com – All rights reserved
-      </div>
+     
     </footer>
   );
 };

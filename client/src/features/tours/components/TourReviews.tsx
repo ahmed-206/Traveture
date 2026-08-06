@@ -18,7 +18,7 @@ export const TourReviews = ({ tour }: TourReviewProps) => {
   }
 
   return (
-    <section className="w-full bg-bg py-16">
+    <section className="w-full bg-primary py-16">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <Swiper
           modules={[Pagination, Autoplay]}
@@ -35,7 +35,7 @@ export const TourReviews = ({ tour }: TourReviewProps) => {
         >
           {tour.reviews?.map((review: Review) => (
             <SwiperSlide key={review._id}>
-              <div className="bg-surface rounded-input p-8 flex flex-col items-center text-center h-full min-h-65 justify-between shadow-xl border border-body/15 transition-shadow">
+              <div className="bg-primary-light/10 rounded-input p-8 flex flex-col items-center text-center h-full min-h-65 justify-between shadow-xl border border-body/15 transition-shadow">
                 
                 {/* User Avatar */}
                 <div className="-mt-3 mb-2">
@@ -47,12 +47,12 @@ export const TourReviews = ({ tour }: TourReviewProps) => {
                 </div>
 
                 {/* User Name */}
-                <h4 className="font-bold text-gray-900 text-lg mb-2">
+                <h4 className="font-bold text-surface text-lg mb-2">
                   {review.user?.name || "Anonymous User"}
                 </h4>
 
                 {/* Review Text */}
-                <p className="text-gray-600 text-sm leading-relaxed mb-4 line-clamp-3">
+                <p className="text-surface/70 text-sm leading-relaxed mb-4 line-clamp-3">
                   {review.review}
                 </p>
 
@@ -64,7 +64,7 @@ export const TourReviews = ({ tour }: TourReviewProps) => {
                       size={18}
                       className={
                         star <= (review.rating || 5)
-                          ? "text-amber-400"
+                          ? "text-secondary"
                           : "text-gray-400"
                       }
                     />

@@ -1,80 +1,55 @@
-import { FaMoneyBillWave , FaCar,FaUserTie, FaHeadset } from "react-icons/fa6";
 
-
+const featuresData = [
+  {
+    id: 1,
+    title: "Best price",
+    description: "We guarantee the lowest prices for unforgettable trips.",
+  },
+  {
+    id: 2,
+    title: "Safe Trip",
+    description: "Travel with certified guides and trusted partners.",
+  },
+  {
+    id: 3,
+    title: "Top Guides",
+    description: "Experienced local guides for every destination.",
+  },
+  {
+    id: 4,
+    title: "24/7 Support",
+    description: "We're here anytime before and during your journey.",
+  },
+];
 const ChooseUs = () => {
-    
-  return (
-    <section className="pt-12 pb-24 px-6 bg-bg ">
-      <div className="max-w-300 mx-auto ">
-        <h2 className="text-4xl font-bold font-headings text-heading mt-3 tracking-tight text-center">
-          Why travel with us
+ return (
+    <section
+      className="relative py-28 px-6 bg-cover bg-center bg-no-repeat"
+      style={{ backgroundImage: `url('/img/cover.png')` }}
+    >
+      {/* Overlay خفيف لإبراز النص فوق الصورة */}
+      <div className="absolute inset-0 bg-linear-to-t from-black/80 via-black/50 to-black/30 backdrop-blur-[1px]" />
+
+      {/* Content Container */}
+      <div className="relative z-10 max-w-6xl mx-auto">
+        <h2 className="text-4xl sm:text-5xl font-bold font-headings text-white text-center mb-20 tracking-tight">
+          Why travel with Traveture
         </h2>
 
-        <div className="mt-16 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
-            {/* card 1 */}
-          <div className="group flex h-64 w-full flex-col items-center justify-center rounded-card bg-surface p-6 text-center shadow-card transition-all duration-300 hover:-translate-y-2">
-            <div className="mb-8 rounded-full p-5 transition-all duration-300 ">
-              <FaMoneyBillWave
-                size={42}
-                className="text-primary "
-              />
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+          {featuresData.map((item) => (
+            <div
+              key={item.id}
+              className="flex flex-col border-l-6 border-secondary pl-4 text-left justify-start transition-all duration-300 hover:translate-x-2"
+            >
+              <h3 className="font-headings text-2xl font-bold text-white tracking-wide">
+                {item.title}
+              </h3>
+              <p className="mt-2 text-sm leading-relaxed text-white/80 font-light">
+                {item.description}
+              </p>
             </div>
-            <div>
-
-            <h3 className="font-headings text-xl font-semibold text-color-heading transition-colors duration-300 ">
-              Best price
-            </h3>
-            <p className="mt-3 text-sm leading-6 text-body transition-colors duration-300 ">We guarantee the lowest prices for unforgettable trips.</p>
-            </div>
-          </div>
-          {/* card 2 */}
-          <div className="group flex h-64 w-full flex-col items-center justify-center rounded-card bg-surface p-6 text-center shadow-card transition-all duration-300 hover:-translate-y-2">
-            <div className="mb-8 rounded-full p-5 transition-all duration-300 ">
-              <FaCar 
-                size={42}
-                className="text-primary "
-              />
-            </div>
-            <div>
-
-            <h3 className="font-headings text-xl font-semibold text-color-heading transition-colors duration-300 ">
-            Safe Trip
-            </h3>
-            <p className="mt-3 text-sm leading-6 text-body transition-colors duration-300 ">Travel with certified guides and trusted partners.</p>
-            </div>
-          </div>
-          {/* card 3 */}
-          <div className="group flex h-64 w-full flex-col items-center justify-center rounded-card bg-surface p-6 text-center shadow-card transition-all duration-300 hover:-translate-y-2">
-            <div className="mb-8 rounded-full p-5 transition-all duration-300 ">
-              <FaUserTie
-                size={42}
-                className="text-primary "
-              />
-            </div>
-            <div>
-
-            <h3 className="font-headings text-xl font-semibold text-color-heading transition-colors duration-300 ">
-            Top Guides
-            </h3>
-            <p className="mt-3 text-sm leading-6 text-body transition-colors duration-300 ">Experienced local guides for every destination.</p>
-            </div>
-          </div>
-          {/* card 4 */}
-          <div className="group flex h-64 w-full flex-col items-center justify-center rounded-card bg-surface p-6 text-center shadow-card transition-all duration-300 hover:-translate-y-2">
-            <div className="mb-8 rounded-full p-5 transition-all duration-300 ">
-              <FaHeadset
-                size={42}
-                className="text-primary "
-              />
-            </div>
-            <div>
-
-            <h3 className="font-headings text-xl font-semibold text-color-heading transition-colors duration-300 ">
-            24/7 Support
-            </h3>
-            <p className="mt-3 text-sm leading-6 text-body transition-colors duration-300 ">We're here anytime before and during your journey.</p>
-            </div>
-          </div>
+          ))}
         </div>
       </div>
     </section>

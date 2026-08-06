@@ -23,7 +23,7 @@ const TourCard = ({ tour }) => {
         <img
           src={`http://localhost:3000/img/tours/${tour.imageCover}`}
           alt={tour.name}
-          className="h-full w-full object-cover"
+          className="h-full w-full object-cover rounded-card"
         />
       </div>
 
@@ -35,7 +35,7 @@ const TourCard = ({ tour }) => {
             <h3 className="text-primary font-bold text-lg sm:text-xl leading-snug">
               {tour.name}
             </h3>
-            <div className="flex items-center gap-1 mt-1 text-amber-400 text-xs">
+            <div className="flex items-center gap-1 mt-1 text-secondary text-xs">
               {[...Array(Math.floor(tour.ratingsAverage || 0))].map((_, i) => (
                 <FaStar key={`full-${i}`} />
               ))}
