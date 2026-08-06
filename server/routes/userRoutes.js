@@ -24,6 +24,7 @@ router.patch(
   resizeUserPhoto,
   userController.UpdateMyProfile,
 );
+router.patch('/updateMyPassword', authController.updatePassword);
 
 // Only admin routes
 router.use(authController.restrictTo('admin'));

@@ -7,6 +7,7 @@ import {
 } from '../utils/cookieOptions.js';
 import AppError from '../utils/appError.js';
 import sendResponse from '../utils/sendResponse.js';
+import User from '../models/userModel.js';
 
 // //////////////////////////////////////////////////////////
 
@@ -16,7 +17,10 @@ export const signup = catchAsync(async (req, res, next) => {
   );
 
   setAuthCookies(res, accessToken, refreshToken);
-  sendResponse(res, 201, { message: 'Account created successfully', data: { user } });
+  sendResponse(res, 201, {
+    message: 'Account created successfully',
+    data: { user },
+  });
 });
 
 // //////////////////////////////////////////////////////////
@@ -80,9 +84,13 @@ export const resetPassword = catchAsync(async (req, res, next) => {
 
   setAuthCookies(res, accessToken, refreshToken);
 
-  sendResponse(res, 200, { message: 'Password reset successfully', data: { user } });
+  sendResponse(res, 200, {
+    message: 'Password reset successfully',
+    data: { user },
+  });
 });
 
+// //////////////////////////////////////////////////////////
 export const restrictTo =
   (...roles) =>
   (req, res, next) => {
@@ -93,3 +101,20 @@ export const restrictTo =
     }
     next();
   };
+
+// //////////////////////////////////////////////////////////
+
+export const updatePassword = catchAsync(async (req, res, next) => {
+  const authData = await authService.updatePassword({
+  userId: req.user.id,
+  currentPassword: req.body.currentPassword,
+  password: req.body.password,
+  passwordConfirm: req.body.passwordConfirm,
+});
+  setAuthCookies(res, authData.accessToken, authData.refreshToken);
+
+  sendResponse(res, 200, {
+    message: 'Password updated successfully',
+    data: authData.user,
+  });
+});

@@ -91,6 +91,7 @@ export const protect = async (req) => {
   return currentUser;
 };
 
+// Logout
 export const logout = async (refreshToken) => {
   try {
     const decoded = await promisify(jwt.verify)(
@@ -193,5 +194,26 @@ export const resetPassword = async ({ token, password, passwordConfirm }) => {
   user.passwordResetExpires = undefined;
   await user.save();
 
+  return createAuthResponse(user);
+};
+
+// Update Password
+export const updatePassword = async ({
+  userId,
+  currentPassword,
+  password,
+  passwordConfirm,
+}) => {
+  const user = await User.findById(userId).select('+password');
+  if (!user) {
+    throw new AppError('User not found', 404);
+  }
+
+  if (!(await user.isPasswordCorrect(currentPassword, user.password))) {
+    throw new AppError('Incorrect password', 401);
+  }
+  user.password = password;
+  user.passwordConfirm = passwordConfirm;
+  await user.save();
   return createAuthResponse(user);
 };
