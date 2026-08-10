@@ -24,7 +24,11 @@ api.interceptors.response.use(
 
   async (error) => {
     const originalRequest = error.config;
-    if (error.response?.status === 401 && !originalRequest._retry) {
+    if (
+      error.response?.status === 401 &&
+      !originalRequest._retry &&
+      !originalRequest.url?.includes("/users/refresh")
+    ) {
       if (isRefresh) {
         return new Promise((resolve, reject) => {
           failedQueue.push({ resolve, reject });
@@ -48,6 +52,8 @@ api.interceptors.response.use(
         isRefresh = false;
       }
     }
+
+    return Promise.reject(error);
   },
 );
 
