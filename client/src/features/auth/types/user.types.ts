@@ -4,6 +4,7 @@ export interface User {
   email: string;
   role: string;
   photo: string;
+  favorites?: string[];
 }
 
 export interface AuthUserData {

@@ -2,10 +2,12 @@ import TourCard from "./cards/TourCard";
 import { TourSkeleton } from "./loadingState/TourSkeleton";
 import { TourErrorState } from "./TourErrorState";
 import { useFeaturedTours } from "../hooks/useFeaturedTours";
+import { useFavorites } from "../../favorites/hooks/useFavorites";
 
 export const TourGrid = () => {
   const { data, error, isError, isLoading, refetch } = useFeaturedTours();
-
+  const { data: favorites = [] } = useFavorites();
+  const favoriteIds = new Set(favorites.map((tour) => tour._id));
   if (isLoading) {
     return (
       <div className="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3">
@@ -31,7 +33,7 @@ export const TourGrid = () => {
   return (
     <div className="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3">
       {data.tours.map((tour) => (
-        <TourCard key={tour._id} tour={tour} />
+        <TourCard key={tour._id} tour={tour}  isFavorite={favoriteIds.has(tour._id)}/>
       ))}
     </div>
   );

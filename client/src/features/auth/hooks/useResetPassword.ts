@@ -11,7 +11,7 @@ export const useResetPassword = () => {
     mutationFn: resetPassword,
 
     onSuccess: (data) => {
-      toast.success(data.message);
+      toast.success(data.message || "Password reset successfully.");
       queryClient.invalidateQueries({
         queryKey: authKeys.me
       })

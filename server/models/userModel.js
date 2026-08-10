@@ -39,6 +39,12 @@ const userSchema = new mongoose.Schema({
       message: 'Passwords are not the same!',
     },
   },
+  favorites: [
+    {
+      type: mongoose.Schema.ObjectId,
+      ref: 'Tour'
+    }
+  ],
   refreshTokenHash: { type: String, select: false },
   passwordChangedAt: Date,
   passwordResetToken: String,

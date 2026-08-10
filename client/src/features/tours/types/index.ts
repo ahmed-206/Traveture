@@ -66,7 +66,11 @@ export interface ToursQuery {
   "price[gte]"?: number;
   "price[lte]"?: number;
   "ratingsAverage[gte]"?: number;
-  
+  "startDates[gte]"?: string;
+  "startDates[lte]"?: string;
+  "startLocation.description[regex]"?: string;
+  "startLocation.description[options]"?: string;
+  [key: string]: unknown;
 }
 
 export interface ToursResponse {

@@ -2,8 +2,9 @@ import { useState } from "react";
 import { useSearchParams } from "react-router-dom";
 import TourCard from "../components/cards/TourCardHorizental";
 import { FaFilter, FaSortAmountDown } from "react-icons/fa";
-import heroCover from "/img/toursHero.jpg";
+import heroCover from "/img/toursHero.png";
 import { useTours } from "../hooks/useTours";
+import { useFavorites } from "../../favorites/hooks/useFavorites";
 import { AllToursSkeleton } from "../components/loadingState/AllToursSkeleton";
 import { DURATION_MAP, DESTINATIONS, PRICE_MAP, SORT_MAP} from "../constants/filters";
 
@@ -11,20 +12,32 @@ const LIMIT = 5;
 
 const AllTours = () => {
   const [searchParams] = useSearchParams();
-  const destinationFromUrl = searchParams.get('destination')
+  const destinationFromUrl = searchParams.get('destination');
+  const dateFromUrl = searchParams.get('date');
   const [page, setPage] = useState(1);
   const [destination, setDestination] = useState(destinationFromUrl);
-  const [duration, setDuration] = useState(null);
-  const [price, setPrice] = useState(null);
-  const [rating, setRating] = useState(null);
-  const [sortLabel, setSortLabel] = useState("Most Popular");
+  const startDate = dateFromUrl;
+  const [duration, setDuration] = useState<keyof typeof DURATION_MAP | null>(null);
+  const [price, setPrice] = useState<keyof typeof PRICE_MAP | null>(null);
+  const [rating, setRating] = useState<number | null>(null);
+  const [sortLabel, setSortLabel] = useState<keyof typeof SORT_MAP>("Most Popular");
 
-  
+  // Build date filter: match tours that have a startDate on the selected day
+  const dateFilters = startDate
+    ? {
+        "startDates[gte]": new Date(startDate).toISOString(),
+        "startDates[lte]": new Date(
+          new Date(startDate).getTime() + 24 * 60 * 60 * 1000,
+        ).toISOString(),
+      }
+    : {};
+
   const filters = {
     ...(destination && {
       "startLocation.description[regex]": destination,
       "startLocation.description[options]": "i",
     }),
+    ...dateFilters,
     ...(duration && DURATION_MAP[duration]),
     ...(price && PRICE_MAP[price]),
     ...(rating && { "ratingsAverage[gte]": rating }),
@@ -35,6 +48,9 @@ const AllTours = () => {
     ...filters,
     limit: LIMIT,
   });
+  const { data: favorites = [] } = useFavorites();
+  const favoriteIds = new Set(favorites.map((tour) => tour._id));
+
   const tours = data?.tours ?? [];
   const totalCount = data?.totalCount ?? 0;
   const totalPages = Math.ceil(totalCount / LIMIT);
@@ -115,7 +131,7 @@ const AllTours = () => {
                         checked={duration === item}
                         onChange={() => {
                           setPage(1);
-                          setDuration(item);
+                          setDuration(item as keyof typeof DURATION_MAP);
                         }}
                         className="text-primary focus:ring-0 border-body"
                       />
@@ -141,7 +157,7 @@ const AllTours = () => {
                         checked={price === item}
                         onChange={() => {
                           setPage(1);
-                          setPrice((prev) => (prev === item ? null : item));
+                          setPrice((prev) => (prev === item ? null : (item as keyof typeof PRICE_MAP)));
                         }}
                         className="rounded text-primary focus:ring-0 border-body"
                       />
@@ -200,7 +216,7 @@ const AllTours = () => {
                   value={sortLabel}
                   onChange={(e) => {
                     setPage(1);
-                    setSortLabel(e.target.value);
+                    setSortLabel(e.target.value as keyof typeof SORT_MAP);
                   }}
                   className="bg-gray-50 border border-body text-body text-xs rounded-lg p-2 focus:outline-none focus:border-primary font-medium"
                 >
@@ -213,7 +229,7 @@ const AllTours = () => {
 
             <div className="space-y-4">
               {tours.map((tour) => (
-                <TourCard key={tour._id} tour={tour} />
+                <TourCard key={tour._id} tour={tour} isFavorite={favoriteIds.has(tour._id)} />
               ))}
             </div>
 
