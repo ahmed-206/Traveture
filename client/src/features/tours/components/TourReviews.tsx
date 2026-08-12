@@ -14,7 +14,11 @@ interface TourReviewProps {
 export const TourReviews = ({ tour }: TourReviewProps) => {
   const hasReviews = tour.reviews && tour.reviews.length > 0;
   if (!hasReviews) {
-    return <div className="text-center py-10 text-body">No reviews yet for this tour</div>
+    return (
+      <div className="text-center py-10 text-body">
+        No reviews yet for this tour
+      </div>
+    );
   }
 
   return (
@@ -35,29 +39,31 @@ export const TourReviews = ({ tour }: TourReviewProps) => {
         >
           {tour.reviews?.map((review: Review) => (
             <SwiperSlide key={review._id}>
-              <div className="bg-primary-light/10 rounded-input p-8 flex flex-col items-center text-center h-full min-h-65 justify-between shadow-xl border border-body/15 transition-shadow">
+              <div className="relative group bg-white/10 backdrop-blur-md rounded-input p-8 flex flex-col items-center text-center h-full min-h-65 justify-between shadow-lg border border-white/30 transition-all duration-300  overflow-hidden">
                 
-                {/* User Avatar */}
-                <div className="-mt-3 mb-2">
+                <div className="absolute -top-12 -left-12 w-24 h-24 bg-white/20 rounded-full blur-xl pointer-events-none group-hover:scale-150 transition-transform duration-500" />
+
+                
+                <div className="-mt-3 mb-2 relative z-10">
                   <img
                     src={getUserImageUrl(review.user?.photo)}
                     alt={review.user?.name || "User"}
-                    className="w-14 h-14 rounded-full object-cover border-2 border-white shadow-sm"
+                    className="w-14 h-14 rounded-full object-cover border-2 border-white/60 shadow-md"
                   />
                 </div>
 
-                {/* User Name */}
-                <h4 className="font-bold text-surface text-lg mb-2">
+               
+                <h4 className="font-bold text-white text-lg mb-2 relative z-10 drop-shadow-sm">
                   {review.user?.name || "Anonymous User"}
                 </h4>
 
-                {/* Review Text */}
-                <p className="text-surface/70 text-sm leading-relaxed mb-4 line-clamp-3">
+                
+                <p className="text-white/80 text-sm leading-relaxed mb-4 line-clamp-3 relative z-10 font-light">
                   {review.review}
                 </p>
 
-                {/* Rating Stars */}
-                <div className="flex items-center gap-1">
+                
+                <div className="flex items-center gap-1 relative z-10">
                   {[1, 2, 3, 4, 5].map((star) => (
                     <FaStar
                       key={star}
@@ -65,12 +71,11 @@ export const TourReviews = ({ tour }: TourReviewProps) => {
                       className={
                         star <= (review.rating || 5)
                           ? "text-secondary"
-                          : "text-gray-400"
+                          : "text-white/30"
                       }
                     />
                   ))}
                 </div>
-
               </div>
             </SwiperSlide>
           ))}

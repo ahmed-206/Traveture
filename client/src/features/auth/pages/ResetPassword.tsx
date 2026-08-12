@@ -1,13 +1,13 @@
 import { useParams, useNavigate } from "react-router-dom";
-import { Input } from "../components/ui/Input";
-import { Button } from "../components/ui/Button";
+import { Input } from "../../../components/ui/Input";
+import { Button } from "../../../components/ui/Button";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useResetPassword } from "../features/auth/hooks/useResetPassword";
+import { useResetPassword } from "../../auth/hooks/useResetPassword";
 import {
   type ResetPasswordData,
   resetPasswordSchema,
-} from "../features/auth/validation/authSchema";
+} from "../../auth/validation/authSchema";
 
 export const ResetPassword = () => {
   const navigate = useNavigate();

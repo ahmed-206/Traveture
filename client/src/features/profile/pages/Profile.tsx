@@ -1,25 +1,22 @@
 import { useState } from "react";
-import { AccountSettings } from "../features/profile/components/AccountSettings";
-import { PasswordSettings } from "../features/profile/components/PasswordSettings";
-
-
+import { AccountSettings } from "../components/AccountSettings";
+import { PasswordSettings } from "../components/PasswordSettings";
+import { menuConfig } from "../../../constant/menuConfig";
+import { useMe } from "../../auth/hooks/useMe";
 
 const ProfilePage = () => {
   const [activeTab, setActiveTab] = useState("settings");
+  const { data: user } = useMe();
+  const navigation = menuConfig[user.role];
 
   return (
     <div className="min-h-screen bg-bg py-12 px-4 flex justify-center items-center">
       {/* Container Card */}
       <div className="bg-white w-full max-w-5xl rounded-card shadow-lg flex flex-col md:flex-row overflow-hidden min-h-175">
         {/* Side Navigation (Left Panel) */}
-        <nav className="w-full md:w-64 bg-linear-to-r from-primary to-primary-light py-10 flex flex-col text-white shrink-0">
+        <nav className="w-full md:w-64 bg-primary  py-10 flex flex-col text-white shrink-0">
           <ul className="space-y-1 w-full">
-            {[
-              { id: "settings", label: "Settings" },
-              { id: "booking", label: "My booking" },
-              { id: "reviews", label: "My reviews" },
-              { id: "billing", label: "Billing" },
-            ].map((tab) => (
+            {navigation.map((tab) => (
               <li key={tab.id}>
                 <button
                   onClick={() => setActiveTab(tab.id)}

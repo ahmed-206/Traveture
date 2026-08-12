@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { useMe } from "../features/auth/hooks/useMe";
 import { useLogout } from "../features/auth/hooks/useLogout";
-
+import { FaRegHeart, FaArrowRightFromBracket } from "react-icons/fa6";
 const Navbar = () => {
   const [isScrolled, setIsScrolled] = useState(false);
   const { data: user } = useMe();
@@ -24,7 +24,7 @@ const Navbar = () => {
   }, []);
   return (
     <nav
-      className={`fixed top-0 left-0 w-full z-20 transition-all duration-300 ${
+      className={`fixed top-0 left-0 w-full z-20 transition-all duration-300 bg-white${
         isScrolled
           ? "py-2 bg-white/95 backdrop-blur-md shadow-md border-b border-gray-100 text-primary" // 👈 تحويل النص للـ primary
           : "pt-2 pb-4 text-white"
@@ -98,25 +98,30 @@ const Navbar = () => {
 
         {/* buttons */}
         {user ? (
-          <div className="flex items-center gap-4 font-body font-semibold">
+          <div className="flex items-center gap-3 font-body font-semibold">
+            <Link to="/favorites">
+              <div className="p-1.5 rounded-full bg-body/30 backdrop-blur-xl">
+                <FaRegHeart size={18} className="text-surface" />
+              </div>
+            </Link>
             <Link to="profile">
               <img
                 src={`http://localhost:3000/img/users/${user.photo}`}
                 alt={user.name}
-                className="w-10 h-10 rounded-full object-cover border-2 border-primary/20"
+                className="w-8 h-8 rounded-full object-cover border-2 border-primary/20"
               />
             </Link>
-
             <button
               onClick={() => logout()}
               disabled={isPending}
-              className={`px-4 py-1.5 border rounded-input transition-all cursor-pointer ${
+              className={`inline-flex items-center justify-center gap-2  transition-all cursor-pointer ${
                 isScrolled
-                  ? "border-primary text-primary hover:bg-error hover:border-error hover:text-white"
-                  : "border-white text-white hover:bg-error hover:border-error"
+                  ? " text-white hover:text-error"
+                  : " text-white hover:text-error"
               }`}
             >
-              {isPending ? "Logging out..." : "Logout"}
+              <span>{isPending ? "Logging out..." : <div className="p-1.5 rounded-full bg-body/30 backdrop-blur-xl"><FaArrowRightFromBracket className="shrink-0" size={18}/></div>}</span>
+              
             </button>
           </div>
         ) : (

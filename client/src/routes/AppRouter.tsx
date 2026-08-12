@@ -2,14 +2,15 @@ import { RouterProvider, createBrowserRouter } from "react-router-dom";
 import MainLayout from "../layouts/MainLayout";
 import Home from "../pages/HomePage";
 import ToursDetails from "../features/tours/pages/TourDetails";
-import { LoginPage } from "../pages/Login";
+import { LoginPage } from "../features/auth/pages/Login";
 import NotFound from "../pages/NotFound";
-import { SignupPage } from "../pages/Signup";
+import { SignupPage } from "../features/auth/pages/Signup";
 import ProtectRoute from "../components/auth/ProtectedRoute";
-import ProfilePage from "../pages/Profile";
+import ProfilePage from "../features/profile/pages/Profile";
 import AllTours from "../features/tours/pages/AllTours";
-import ForgotPassword from "../pages/ForgotPassword";
-import ResetPassword from "../pages/ResetPassword";
+import ForgotPassword from "../features/auth/pages/ForgotPassword";
+import ResetPassword from "../features/auth/pages/ResetPassword";
+import { Favorites } from "../features/favorites/pages/FavoritesPage";
 
 const router = createBrowserRouter([
   {
@@ -28,7 +29,6 @@ const router = createBrowserRouter([
         path: "tours/:tourId",
         element: <ToursDetails />,
       },
-  
     ],
   },
 
@@ -42,11 +42,11 @@ const router = createBrowserRouter([
   },
   {
     path: "forgot-password",
-    element: <ForgotPassword />
+    element: <ForgotPassword />,
   },
   {
     path: "resetPassword/:token",
-    element: <ResetPassword />
+    element: <ResetPassword />,
   },
   {
     path: "*",
@@ -57,6 +57,14 @@ const router = createBrowserRouter([
     element: (
       <ProtectRoute>
         <ProfilePage />
+      </ProtectRoute>
+    ),
+  },
+  {
+    path: "favorites",
+    element: (
+      <ProtectRoute>
+        <Favorites />
       </ProtectRoute>
     ),
   },

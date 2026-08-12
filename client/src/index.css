@@ -41,13 +41,7 @@
 }
 
 
-/* *,
-*::before,
-*::after {
-  box-sizing: border-box;
-  margin: 0;
-  padding: 0;
-} */
+
 
 body {
   background-color: var(--color-bg);
@@ -89,24 +83,24 @@ body {
 }
 
 
-/* إعطاء مسافة تحت السلايدر عشان النقاط تلاقي مكان تقعد فيه برة الكروت */
+/*  مسافة تحت السلايدر برة الكروت */
 .swiper {
   padding-bottom: 50px !important;
 }
 
-/* تحريك النقاط لأسفل خارج الكروت */
+/*  النقاط  خارج الكروت */
 .swiper-pagination {
   bottom: 10px !important;
 }
 
-/* تحسين شكل النقاط ولونها */
+/*  شكل النقاط  */
 .swiper-pagination-bullet {
   background: #cbd5e1 !important;
   opacity: 1 !important;
 }
 
 .swiper-pagination-bullet-active {
-  background: #0ea5e9 !important; /* لون أزرق جذاب متناسق */
-  width: 24px !important;         /* جعل النقطة النشطة بيضاوية الشكل لإعطاء لمسة عصرية */
+  background: #0ea5e9 !important; 
+  width: 24px !important;        
   border-radius: 5px !important;
 }

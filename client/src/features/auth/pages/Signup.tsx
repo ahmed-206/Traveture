@@ -4,10 +4,10 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import {
   type SignupData,
   signupSchema,
-} from "../features/auth/validation/authSchema";
-import { useSignup } from "../features/auth/hooks/useSignup";
-import { Input } from "../components/ui/Input";
-import { Button } from "../components/ui/Button";
+} from "../../auth/validation/authSchema";
+import { useSignup } from "../../auth/hooks/useSignup";
+import { Input } from "../../../components/ui/Input";
+import { Button } from "../../../components/ui/Button";
 
 export const SignupPage = () => {
   const { mutate, isPending } = useSignup();

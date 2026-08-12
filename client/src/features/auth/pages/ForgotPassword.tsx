@@ -1,12 +1,12 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
-import { Input } from "../components/ui/Input";
-import { Button } from "../components/ui/Button";
+import { Input } from "../../../components/ui/Input";
+import { Button } from "../../../components/ui/Button";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useForgotPassword } from "../features/auth/hooks/useForgotPassword";
-import { type ForgotPasswordData, forgotPasswordSchema } from "../features/auth/validation/authSchema";
-import { EmailSentSuccess } from "../features/auth/components/EmailSent";
+import { useForgotPassword } from "../hooks/useForgotPassword";
+import { type ForgotPasswordData, forgotPasswordSchema } from "../../auth/validation/authSchema";
+import { EmailSentSuccess } from "../../auth/components/EmailSent";
 
 
 

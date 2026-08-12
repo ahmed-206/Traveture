@@ -55,22 +55,36 @@ export const TourPreview = ({ tour, onBookTour }: TourPreviewProps) => {
       {/*  MAP  */}
       <TourMap tour={tour} />
       <TourReviews tour={tour}/>
-      <div className="bg-bg py-16 px-4">
-        <div className=" p-8 sm:p-14 text-center max-w-5xl mx-auto ">
-          <h2 className="text-2xl sm:text-4xl md:text-3xl font-extrabold text-primary tracking-tight mb-4">
-            What are you waiting for?
-          </h2>
+      <div className="bg-surface py-16 px-4">
+        <div className="relative p-8 sm:p-14 text-center max-w-5xl mx-auto rounded-card overflow-hidden shadow-2xl">
+          
+         
+          <div 
+            className="absolute inset-0 bg-cover bg-center scale-105"
+            style={{ backgroundImage: `url('/img/cta.png')` }}
+          />
 
-          <p className="text-body/50 text-base sm:text-lg md:text-xl font-medium mb-8">
-            {tour.duration ?? 0} days. 1 adventure. Infinite memories. Make it yours today!
-          </p>
+          
+          <div className="absolute inset-0 bg-primary-dark/50" />
 
-          <button
-            onClick={onBookTour}
-            className="bg-linear-to-r from-primary  to-primary-light text-white font-bold text-lg px-8 py-3.5 rounded-input shadow-lg hover:shadow-xl hover:scale-105 transition-all duration-300 active:scale-95"
-          >
-            Book Tour Now
-          </button>
+         
+          <div className="relative z-10">
+            <h2 className="text-2xl sm:text-4xl md:text-3xl font-extrabold text-white tracking-tight mb-4 drop-shadow-md">
+              What are you waiting for?
+            </h2>
+
+            <p className="text-white/90 text-base sm:text-lg md:text-xl font-medium mb-8 max-w-2xl mx-auto drop-shadow-sm">
+              {tour.duration ?? 0} days. 1 adventure. Infinite memories. Make it yours today!
+            </p>
+
+            <button
+              onClick={onBookTour}
+              className="bg-primary text-white font-bold text-lg px-8 py-3.5 rounded-input shadow-lg hover:shadow-xl hover:scale-105 transition-all duration-300 active:scale-95 cursor-pointer"
+            >
+              Book Tour Now
+            </button>
+          </div>
+
         </div>
       </div>
     </section>

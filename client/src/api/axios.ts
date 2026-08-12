@@ -5,7 +5,7 @@ const api = axios.create({
   withCredentials: true,
 });
 
-let isRefresh = false;
+let isRefreshing = false;
 let failedQueue: {
   resolve: (value?: unknown) => void;
   reject: (reason?: unknown) => void;
@@ -29,7 +29,7 @@ api.interceptors.response.use(
       !originalRequest._retry &&
       !originalRequest.url?.includes("/users/refresh")
     ) {
-      if (isRefresh) {
+      if (isRefreshing) {
         return new Promise((resolve, reject) => {
           failedQueue.push({ resolve, reject });
         })
@@ -38,7 +38,7 @@ api.interceptors.response.use(
       }
 
       originalRequest._retry = true;
-      isRefresh = true;
+      isRefreshing = true;
 
       try {
         await api.post("/users/refresh");
@@ -46,10 +46,9 @@ api.interceptors.response.use(
         return api(originalRequest);
       } catch (refreshError) {
         processQueue(refreshError);
-        window.location.href = "/login";
         return Promise.reject(refreshError);
       } finally {
-        isRefresh = false;
+        isRefreshing = false;
       }
     }
 
