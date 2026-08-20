@@ -6,6 +6,7 @@ import userRoutes from './routes/userRoutes.js';
 import tourRoutes from './routes/tourRoutes.js';
 import reviewRoutes from './routes/reviewRoutes.js';
 import favoriteRoutes from './routes/favoriteRoutes.js';
+import bookingRoutes from './routes/bookingRoutes.js';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import AppError from './utils/appError.js';
@@ -35,6 +36,7 @@ app.use('/api/v1/users', userRoutes);
 app.use('/api/v1/tours', tourRoutes);
 app.use('/api/v1/reviews', reviewRoutes);
 app.use('/api/v1/favorites', favoriteRoutes);
+app.use('/api/v1/bookings', bookingRoutes);
 
 app.all('/{*any}', (req, res, next) => {
   next(new AppError(`Can't find ${req.originalUrl} on this server!`, 404));

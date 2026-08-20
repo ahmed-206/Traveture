@@ -10,11 +10,9 @@ beforeAll(async () => {
     process.env.DATABASE_PASSWORD,
   );
 
-
   await mongoose.connect(DB);
 });
 beforeEach(async () => {
-  
   const collections = mongoose.connection.collections;
   for (const key in collections) {
     await collections[key].deleteMany();

@@ -30,10 +30,10 @@ describe('Favorites Integration Tests', () => {
     await User.deleteMany({});
     await Tour.deleteMany({});
 
-    // Create User
+    
     await User.create(userData);
 
-    // Login to get cookies
+    
     const loginRes = await request(app).post('/api/v1/users/login').send({
       email: userData.email,
       password: userData.password,
