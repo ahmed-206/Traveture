@@ -1,11 +1,15 @@
-import 'dotenv/config';
+
 import mongoose from 'mongoose';
 import app from '../server/app.js';
 
-let isConnected = false;
+if (!process.env.VERCEL) {
+  const dotenv = await import('dotenv');
+  dotenv.config({ path: './server/.env' });
+}
 
 async function connectDB() {
-  if (isConnected) return;
+  
+  if (mongoose.connection.readyState === 1) return;
 
   if (!process.env.DATABASE || !process.env.DATABASE_PASSWORD) {
     throw new Error('Missing DATABASE environment variables');
@@ -16,8 +20,12 @@ async function connectDB() {
     process.env.DATABASE_PASSWORD,
   );
 
-  await mongoose.connect(DB);
-  isConnected = true;
+  await mongoose.connect(DB, {
+    serverSelectionTimeoutMS: 5000,
+    socketTimeoutMS: 20000,
+    bufferCommands: false, 
+  });
+
   console.log('DB connection success (serverless)');
 }
 
