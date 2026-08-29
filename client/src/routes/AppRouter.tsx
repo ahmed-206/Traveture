@@ -11,6 +11,7 @@ import AllTours from "../features/tours/pages/AllTours";
 import ForgotPassword from "../features/auth/pages/ForgotPassword";
 import ResetPassword from "../features/auth/pages/ResetPassword";
 import { Favorites } from "../features/favorites/pages/FavoritesPage";
+import { BookingPage } from "../features/bookings/pages/BookingPage";
 
 const router = createBrowserRouter([
   {
@@ -68,6 +69,14 @@ const router = createBrowserRouter([
       </ProtectRoute>
     ),
   },
+  {
+    path: "booking",
+    element: (
+       <ProtectRoute>
+        <BookingPage />
+      </ProtectRoute>
+    )
+  }
 ]);
 
 const AppRouter = () => {

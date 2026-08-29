@@ -3,6 +3,7 @@ import { getTourImageUrl } from "../../../utils/getImageUrl";
 import { TourMap } from "../components/TourMap";
 import { TourReviews } from "../components/TourReviews";
 import { FaMapPin } from "react-icons/fa6";
+import { Link } from "react-router-dom";
 
 interface TourPreviewProps {
   tour: Tour;
@@ -77,12 +78,13 @@ export const TourPreview = ({ tour, onBookTour }: TourPreviewProps) => {
               {tour.duration ?? 0} days. 1 adventure. Infinite memories. Make it yours today!
             </p>
 
-            <button
+            <Link
+              to="/booking"
               onClick={onBookTour}
               className="bg-primary text-white font-bold text-lg px-8 py-3.5 rounded-input shadow-lg hover:shadow-xl hover:scale-105 transition-all duration-300 active:scale-95 cursor-pointer"
             >
               Book Tour Now
-            </button>
+            </Link>
           </div>
 
         </div>

@@ -1,0 +1,451 @@
+%PDF-1.4
+%‚„œ”
+1 0 obj
+<<
+/Producer (pypdf)
+>>
+endobj
+2 0 obj
+<<
+/Type /Pages
+/Count 1
+/Kids [ 4 0 R ]
+>>
+endobj
+3 0 obj
+<<
+/Type /Catalog
+/Pages 2 0 R
+>>
+endobj
+4 0 obj
+<<
+/Contents 5 0 R
+/MediaBox [ 0 0 595.2756 841.8898 ]
+/Resources <<
+/Font <<
+/F1 6 0 R
+/F1-0 7 0 R
+/F2 8 0 R
+/F2-0 9 0 R
+>>
+/ProcSet [ /ImageB /ImageC /ImageI /PDF /Text ]
+>>
+/Rotate 0
+/Trans <<
+>>
+/Type /Page
+/Annots [ ]
+/Parent 2 0 R
+>>
+endobj
+5 0 obj
+<<
+/Length 7987
+>>
+stream
+q
+1 0 0 1 0 0 cm  BT /F1 12 Tf 14.4 TL ET
+q
+1 0 0 1 57.02362 769.2047 cm
+q
+.058824 .090196 .164706 rg
+BT 1 0 0 1 0 4 Tm /F2 23 Tf 27 TL (Ahmed Ramadan) Tj T* ET
+Q
+Q
+q
+1 0 0 1 57.02362 755.2047 cm
+q
+.007843 .517647 .780392 rg
+BT 1 0 0 1 0 3 Tm /F1 11 Tf 14 TL (Frontend Developer) Tj T* ET
+Q
+Q
+q
+1 0 0 1 57.02362 748.9685 cm
+Q
+q
+1 0 0 1 57.02362 736.9685 cm
+q
+BT 1 0 0 1 0 3.2 Tm 12 TL /F1 8.8 Tf .2 .254902 .333333 rg (GitHub  ) Tj (|) Tj (  Portfolio  ) Tj (|) Tj (  elgen9961@gmail.com  ) Tj (|) Tj (  +20 111 259 0861) Tj T* ET
+Q
+Q
+q
+1 0 0 1 57.02362 725.6299 cm
+Q
+q
+1 0 0 1 51.02362 724.9299 cm
+q
+.796078 .835294 .882353 rg
+n 0 .7 493.2283 -0.7 re f*
+0 0 0 rg
+BT /F1 10 Tf 12 TL ET
+BT 1 0 0 1 0 2 Tm  T* ET
+q
+Q
+Q
+Q
+q
+1 0 0 1 57.02362 713.5913 cm
+Q
+q
+1 0 0 1 57.02362 700.5913 cm
+q
+.058824 .090196 .164706 rg
+BT 1 0 0 1 0 2.5 Tm /F2 10.5 Tf 13 TL (PROFILE) Tj T* ET
+Q
+Q
+q
+1 0 0 1 57.02362 675.1913 cm
+q
+.2 .254902 .333333 rg
+BT 1 0 0 1 0 14.85 Tm /F1 8.55 Tf 11.7 TL (Motivated Junior Frontend Developer with hands-on experience building responsive, user-centric web applications. Focused on) Tj T* (clean code, modern UI patterns, and seamless experiences across the React ecosystem.) Tj T* ET
+Q
+Q
+q
+1 0 0 1 57.02362 662.7189 cm
+Q
+q
+1 0 0 1 57.02362 649.7189 cm
+q
+.058824 .090196 .164706 rg
+BT 1 0 0 1 0 2.5 Tm /F2 10.5 Tf 13 TL (PROJECTS) Tj T* ET
+Q
+Q
+q
+1 0 0 1 57.02362 644.8843 cm
+Q
+q
+1 0 0 1 57.02362 632.6843 cm
+q
+BT 1 0 0 1 0 2.4 Tm 12.2 TL /F2 9.8 Tf .058824 .090196 .164706 rg (Traveture) Tj /F1 9.8 Tf ( ) Tj .007843 .517647 .780392 rg (React - TypeScript - Vite - Tailwind CSS - Express - MongoDB) Tj T* ET
+Q
+Q
+q
+1 0 0 1 57.02362 626.1646 cm
+Q
+q
+1 0 0 1 57.02362 602.7646 cm
+q
+.2 .254902 .333333 rg
+BT 1 0 0 1 0 14.85 Tm /F1 8.55 Tf 11.7 TL (A full-stack tour discovery and booking platform for browsing tours, saving favourites, submitting reviews, and managing) Tj T* (accounts.) Tj T* ET
+Q
+Q
+q
+1 0 0 1 57.02362 599.363 cm
+Q
+q
+1 0 0 1 57.02362 577.563 cm
+q
+BT 1 0 0 1 9.92126 13.6 Tm -9.92126 0 Td 10.9 TL /F2 8.2 Tf .2 .254902 .333333 rg (Responsive tour experience:) Tj /F1 8.2 Tf ( Built tour listing and detail views with filtering, pagination, interactive maps, ratings, and review) Tj T* 9.92126 0 Td (display.) Tj T* ET
+Q
+Q
+q
+1 0 0 1 57.02362 555.763 cm
+q
+BT 1 0 0 1 9.92126 13.6 Tm -9.92126 0 Td 10.9 TL /F2 8.2 Tf .2 .254902 .333333 rg (Secure account features:) Tj /F1 8.2 Tf ( Implemented protected client routes, cookie-based JWT authentication, profile updates, password reset,) Tj T* 9.92126 0 Td (and favourites.) Tj T* ET
+Q
+Q
+q
+1 0 0 1 57.02362 544.863 cm
+q
+BT 1 0 0 1 9.92126 2.7 Tm -9.92126 0 Td 10.9 TL /F2 8.2 Tf .2 .254902 .333333 rg (Booking foundations:) Tj /F1 8.2 Tf ( Integrated booking workflows with per-date seat validation, role-based access, and Stripe webhook support.) Tj T* 9.92126 0 Td ET
+Q
+Q
+q
+1 0 0 1 57.02362 534.6583 cm
+Q
+q
+1 0 0 1 57.02362 522.4583 cm
+q
+BT 1 0 0 1 0 2.4 Tm 12.2 TL /F2 9.8 Tf .058824 .090196 .164706 rg (Clinic Management System) Tj /F1 9.8 Tf ( ) Tj .007843 .517647 .780392 rg (React - TypeScript - Tailwind CSS) Tj T* ET
+Q
+Q
+q
+1 0 0 1 57.02362 515.9386 cm
+Q
+q
+1 0 0 1 57.02362 504.2386 cm
+q
+.2 .254902 .333333 rg
+BT 1 0 0 1 0 3.15 Tm /F1 8.55 Tf 11.7 TL (A web application for managing patients, appointments, doctor schedules, and medical records for a private clinic.) Tj T* ET
+Q
+Q
+q
+1 0 0 1 57.02362 500.837 cm
+Q
+q
+1 0 0 1 57.02362 489.937 cm
+q
+BT 1 0 0 1 9.92126 2.7 Tm -9.92126 0 Td 10.9 TL /F2 8.2 Tf .2 .254902 .333333 rg (Appointment conflicts:) Tj /F1 8.2 Tf ( Prevented overlapping appointments with PostgreSQL exclusion constraints in Supabase.) Tj T* 9.92126 0 Td ET
+Q
+Q
+q
+1 0 0 1 57.02362 479.037 cm
+q
+BT 1 0 0 1 9.92126 2.7 Tm -9.92126 0 Td 10.9 TL /F2 8.2 Tf .2 .254902 .333333 rg (Patient data quality:) Tj /F1 8.2 Tf ( Built real-time phone-number validation to prevent duplicate patient profiles.) Tj T* 9.92126 0 Td ET
+Q
+Q
+q
+1 0 0 1 57.02362 457.237 cm
+q
+BT 1 0 0 1 9.92126 13.6 Tm -9.92126 0 Td 10.9 TL /F2 8.2 Tf .2 .254902 .333333 rg (Role-based access:) Tj /F1 8.2 Tf ( Secured admin, doctor, and receptionist workflows through React route guards and Supabase Row Level) Tj T* 9.92126 0 Td (Security.) Tj T* ET
+Q
+Q
+q
+1 0 0 1 57.02362 447.0323 cm
+Q
+q
+1 0 0 1 57.02362 434.8323 cm
+q
+BT 1 0 0 1 0 2.4 Tm 12.2 TL /F2 9.8 Tf .058824 .090196 .164706 rg (AI Budget Planner) Tj /F1 9.8 Tf ( ) Tj .007843 .517647 .780392 rg (Next.js - TypeScript - Tailwind CSS - OpenAI API) Tj T* ET
+Q
+Q
+q
+1 0 0 1 57.02362 428.3126 cm
+Q
+q
+1 0 0 1 57.02362 404.9126 cm
+q
+.2 .254902 .333333 rg
+BT 1 0 0 1 0 14.85 Tm /F1 8.55 Tf 11.7 TL (An e-commerce experience with an AI-powered outfit planner that suggests complete looks based on a shopper's budget and) Tj T* (occasion.) Tj T* ET
+Q
+Q
+q
+1 0 0 1 57.02362 401.511 cm
+Q
+q
+1 0 0 1 57.02362 379.711 cm
+q
+BT 1 0 0 1 9.92126 13.6 Tm -9.92126 0 Td 10.9 TL /F2 8.2 Tf .2 .254902 .333333 rg (Personalized recommendations:) Tj /F1 8.2 Tf ( Connected the user experience to AI-assisted outfit suggestions to make fashion discovery more) Tj T* 9.92126 0 Td (relevant.) Tj T* ET
+Q
+Q
+q
+1 0 0 1 57.02362 369.5063 cm
+Q
+q
+1 0 0 1 57.02362 368.6559 cm
+Q
+q
+1 0 0 1 57.02362 355.6559 cm
+q
+.058824 .090196 .164706 rg
+BT 1 0 0 1 0 2.5 Tm /F2 10.5 Tf 13 TL (SKILLS) Tj T* ET
+Q
+Q
+q
+1 0 0 1 57.02362 267.8921 cm
+q
+0 0 0 rg
+BT /F1 10 Tf 12 TL ET
+q
+1 0 0 1 0 71.5874 cm
+q
+.058824 .090196 .164706 rg
+BT 1 0 0 1 0 2.8 Tm /F2 8.4 Tf 11.2 TL (Frontend) Tj T* ET
+Q
+Q
+q
+1 0 0 1 87.87402 71.5874 cm
+q
+.2 .254902 .333333 rg
+BT 1 0 0 1 0 2.8 Tm /F1 8.4 Tf 11.2 TL (HTML5, CSS3, JavaScript \(ES6+\), TypeScript, React.js, Next.js) Tj T* ET
+Q
+Q
+q
+1 0 0 1 0 54.43465 cm
+q
+.058824 .090196 .164706 rg
+BT 1 0 0 1 0 2.8 Tm /F2 8.4 Tf 11.2 TL (Backend) Tj T* ET
+Q
+Q
+q
+1 0 0 1 87.87402 54.43465 cm
+q
+.2 .254902 .333333 rg
+BT 1 0 0 1 0 2.8 Tm /F1 8.4 Tf 11.2 TL (Node.js, Express.js, REST APIs, MongoDB, Mongoose, JWT Authentication) Tj T* ET
+Q
+Q
+q
+1 0 0 1 0 37.28189 cm
+q
+.058824 .090196 .164706 rg
+BT 1 0 0 1 0 2.8 Tm /F2 8.4 Tf 11.2 TL (Supabase) Tj T* ET
+Q
+Q
+q
+1 0 0 1 87.87402 37.28189 cm
+q
+.2 .254902 .333333 rg
+BT 1 0 0 1 0 2.8 Tm /F1 8.4 Tf 11.2 TL (PostgreSQL, Authentication, Row Level Security \(RLS\), Database Design) Tj T* ET
+Q
+Q
+q
+1 0 0 1 0 20.12913 cm
+q
+.058824 .090196 .164706 rg
+BT 1 0 0 1 0 2.8 Tm /F2 8.4 Tf 11.2 TL (Styling) Tj T* ET
+Q
+Q
+q
+1 0 0 1 87.87402 20.12913 cm
+q
+.2 .254902 .333333 rg
+BT 1 0 0 1 0 2.8 Tm /F1 8.4 Tf 11.2 TL (Tailwind CSS, Responsive Design, CSS Modules) Tj T* ET
+Q
+Q
+q
+1 0 0 1 0 2.976378 cm
+q
+.058824 .090196 .164706 rg
+BT 1 0 0 1 0 2.8 Tm /F2 8.4 Tf 11.2 TL (Tools) Tj T* ET
+Q
+Q
+q
+1 0 0 1 87.87402 2.976378 cm
+q
+.2 .254902 .333333 rg
+BT 1 0 0 1 0 2.8 Tm /F1 8.4 Tf 11.2 TL (Git, GitHub, VS Code, Vercel, Figma, Stripe Webhooks) Tj T* ET
+Q
+Q
+q
+1 J
+1 j
+.945098 .960784 .976471 RG
+.25 w
+n 0 68.61102 m 493.2283 68.61102 l S
+n 0 51.45827 m 493.2283 51.45827 l S
+n 0 34.30551 m 493.2283 34.30551 l S
+n 0 17.15276 m 493.2283 17.15276 l S
+Q
+Q
+Q
+ 
+
+Q
+
+q
+0.0 0.0 595.2756 841.8898 re
+W
+n
+1 0 0 1 0 0 cm
+BT
+/F1-0 12 Tf
+14.4 TL
+ET
+1 1 1 rg
+n
+48.18898 666.1417 498.8976 90.70866 re
+f*
+0.007843 0.517647 0.780392 rg
+BT
+/F1-0 11 Tf
+13.2 TL
+ET
+BT
+1 0 0 1 51.02362 754.0157 Tm
+(Full Stack Developer) Tj
+T*
+ET
+0.2 0.254902 0.333333 rg
+BT
+/F1-0 8.8 Tf
+10.56 TL
+ET
+BT
+1 0 0 1 51.02362 735.5906 Tm
+(GitHub  \174  Portfolio  \174  elgen9961\100gmail\056com  \174  \05320 111 259 0861) Tj
+T*
+ET
+0.796078 0.835294 0.882353 RG
+0.7 w
+n
+51.02362 724.5354 m
+544.252 724.5354 l
+S
+0.058824 0.090196 0.164706 rg
+BT
+/F2-0 10.5 Tf
+12.6 TL
+ET
+BT
+1 0 0 1 51.02362 706.3937 Tm
+(PROFILE) Tj
+T*
+ET
+q
+1 0 0 1 51.02362 665.9858 cm
+q
+0.2 0.254902 0.333333 rg
+BT
+1 0 0 1 0 14.85 Tm
+/F1-0 8.55 Tf
+11.7 TL
+(Junior Full Stack Developer experienced in building responsive React applications and secure REST APIs using TypeScript\054) Tj
+T*
+(Node\056js\054 Express\054 MongoDB\054 Supabase\054 and PostgreSQL\056 Focused on clean code\054 authentication\054 and user\055centric products\056) Tj
+T*
+ET
+Q
+Q
+Q
+
+
+endstream
+endobj
+6 0 obj
+<<
+/BaseFont /Helvetica
+/Encoding /WinAnsiEncoding
+/Name /F1
+/Subtype /Type1
+/Type /Font
+>>
+endobj
+7 0 obj
+<<
+/BaseFont /Helvetica
+/Encoding /WinAnsiEncoding
+/Name /F1
+/Subtype /Type1
+/Type /Font
+>>
+endobj
+8 0 obj
+<<
+/BaseFont /Helvetica-Bold
+/Encoding /WinAnsiEncoding
+/Name /F2
+/Subtype /Type1
+/Type /Font
+>>
+endobj
+9 0 obj
+<<
+/BaseFont /Helvetica-Bold
+/Encoding /WinAnsiEncoding
+/Name /F2
+/Subtype /Type1
+/Type /Font
+>>
+endobj
+xref
+0 10
+0000000000 65535 f 
+0000000015 00000 n 
+0000000054 00000 n 
+0000000113 00000 n 
+0000000162 00000 n 
+0000000417 00000 n 
+0000008456 00000 n 
+0000008563 00000 n 
+0000008670 00000 n 
+0000008782 00000 n 
+trailer
+<<
+/Size 10
+/Root 3 0 R
+/Info 1 0 R
+>>
+startxref
+8894
+%%EOF

@@ -7,6 +7,9 @@ import { useMe } from "../../auth/hooks/useMe";
 const ProfilePage = () => {
   const [activeTab, setActiveTab] = useState("settings");
   const { data: user } = useMe();
+
+  if (!user) return null;
+
   const navigation = menuConfig[user.role];
 
   return (

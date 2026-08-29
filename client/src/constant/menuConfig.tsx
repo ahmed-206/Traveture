@@ -12,6 +12,19 @@ export const menuConfig: Record<UserRole, sidebarItem[]> = {
     { id: "billing", label: "Billing" },
   ],
 
+  guide: [
+    { id: "settings", label: "Settings" },
+    { id: "bookings", label: "My Bookings" },
+    { id: "reviews", label: "My Reviews" },
+  ],
+
+  "lead-guide": [
+    { id: "settings", label: "Settings" },
+    { id: "bookings", label: "My Bookings" },
+    { id: "reviews", label: "My Reviews" },
+    { id: "billing", label: "Billing" },
+  ],
+
   admin: [
     { id: "dashboard", label: "Dashboard" },
     { id: "tours", label: "Tours" },

@@ -11,6 +11,7 @@ import path from 'path';
 import { fileURLToPath } from 'url';
 import AppError from './utils/appError.js';
 import globalErrorHandler from './middleware/errorHandler.js';
+import { handleStripeWebhook } from './controllers/webhookController.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -24,11 +25,29 @@ if (process.env.NODE_ENV === 'development') {
 }
 
 app.use(cookieParser());
+const allowedOrigins = [
+  'http://localhost:5173',
+  process.env.CLIENT_URL,
+].filter(Boolean);
+
 app.use(
   cors({
-    origin: 'http://localhost:5173',
+    origin: (origin, callback) => {
+      // Allow requests with no origin (mobile apps, curl, etc.)
+      if (!origin || allowedOrigins.includes(origin)) {
+        callback(null, true);
+      } else {
+        callback(new Error('Not allowed by CORS'));
+      }
+    },
     credentials: true,
   }),
+);
+
+app.post(
+  '/api/v1/stripe/webhook',
+  express.raw({ type: 'application/json' }),
+  handleStripeWebhook
 );
 app.use(express.json());
 
