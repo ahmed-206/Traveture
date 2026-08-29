@@ -1,13 +1,15 @@
-import dotenv from 'dotenv';
+import 'dotenv/config';
 import mongoose from 'mongoose';
 import app from '../server/app.js';
-
-dotenv.config({ path: './server/.env' });
 
 let isConnected = false;
 
 async function connectDB() {
   if (isConnected) return;
+
+  if (!process.env.DATABASE || !process.env.DATABASE_PASSWORD) {
+    throw new Error('Missing DATABASE environment variables');
+  }
 
   const DB = process.env.DATABASE.replace(
     '<PASSWORD>',
