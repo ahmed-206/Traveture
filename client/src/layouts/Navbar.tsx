@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import { useMe } from "../features/auth/hooks/useMe";
 import { useLogout } from "../features/auth/hooks/useLogout";
 import { FaRegHeart, FaArrowRightFromBracket } from "react-icons/fa6";
+import { getUserImageUrl } from "../utils/getImageUrl";
 const Navbar = () => {
   const [isScrolled, setIsScrolled] = useState(false);
   const { data: user } = useMe();
@@ -106,7 +107,7 @@ const Navbar = () => {
             </Link>
             <Link to="profile">
               <img
-                src={`http://localhost:3000/img/users/${user.photo}`}
+                src={getUserImageUrl(user.photo)}
                 alt={user.name}
                 className="w-8 h-8 rounded-full object-cover border-2 border-primary/20"
               />

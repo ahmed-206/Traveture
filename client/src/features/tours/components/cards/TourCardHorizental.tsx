@@ -13,6 +13,7 @@ import { Link } from "react-router-dom";
 import { type Tour } from "../../types/index";
 import { useAddFavorite } from "../../../favorites/hooks/useAddFavorite";
 import { useDeleteFavorite } from "../../../favorites/hooks/useDeleteFavorite";
+import { getTourImageUrl } from "../../../../utils/getImageUrl";
 
 interface TourCardProps {
   tour: Tour;
@@ -44,7 +45,7 @@ const TourCard = ({ tour, isFavorite }: TourCardProps) => {
     <div className="bg-white rounded-card shadow-sm hover:shadow-md transition-shadow duration-300 p-3 sm:p-4 flex flex-col sm:flex-row gap-4 sm:gap-6">
       <div className="relative w-full sm:w-5/12 h-48 sm:h-auto min-h-40 rounded-card flex items-center justify-center text-white text-2xl font-semibold shrink-0">
         <img
-          src={`http://localhost:3000/img/tours/${tour.imageCover}`}
+          src={getTourImageUrl(tour.imageCover)}
           alt={tour.name}
           className="h-full w-full object-cover rounded-card"
         />

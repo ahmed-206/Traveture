@@ -10,6 +10,7 @@ import { Link } from "react-router-dom";
 import { type Tour } from "../../types/index";
 import { useAddFavorite } from "../../../favorites/hooks/useAddFavorite";
 import { useDeleteFavorite } from "../../../favorites/hooks/useDeleteFavorite";
+import { getTourImageUrl } from "../../../../utils/getImageUrl";
 
 interface TourCardProps {
   tour: Tour;
@@ -45,7 +46,7 @@ const TourCard = ({ tour, isFavorite }: TourCardProps) => {
       {/* Image */}
       <div className="relative h-55 overflow-hidden">
         <img
-          src={`http://localhost:3000/img/tours/${tour.imageCover}`}
+          src={getTourImageUrl(tour.imageCover)}
           alt={tour.name}
           className="h-full w-full object-cover"
         />

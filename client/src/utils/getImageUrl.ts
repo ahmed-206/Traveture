@@ -1,5 +1,7 @@
 // src/utils/getImageUrl.ts
-const API_BASE_URL = "http://localhost:3000";
+const API_BASE_URL = import.meta.env.VITE_API_URL
+  ? import.meta.env.VITE_API_URL.replace(/\/api\/v1\/?$/, "")
+  : "";
 
 export const getTourImageUrl = (imageName?: string) => {
   if (!imageName) return "/placeholder-tour.jpg"; 
@@ -11,5 +13,5 @@ export const getTourImageUrl = (imageName?: string) => {
 export const getUserImageUrl = (imageName?: string) => {
     if (!imageName) return "/placeholder.jpg";
     if (imageName.startsWith("http")) return imageName;
-    return `http://localhost:3000/img/users/${imageName}`; 
+    return `${API_BASE_URL}/img/users/${imageName}`; 
   };

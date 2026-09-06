@@ -28,12 +28,14 @@ app.use(cookieParser());
 const allowedOrigins = [
   'http://localhost:5173',
   process.env.CLIENT_URL,
+  process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : null,
+  process.env.VERCEL_PROJECT_PRODUCTION_URL ? `https://${process.env.VERCEL_PROJECT_PRODUCTION_URL}` : null,
 ].filter(Boolean);
 
 app.use(
   cors({
     origin: (origin, callback) => {
-      // Allow requests with no origin (mobile apps, curl, etc.)
+      
       if (!origin || allowedOrigins.includes(origin)) {
         callback(null, true);
       } else {

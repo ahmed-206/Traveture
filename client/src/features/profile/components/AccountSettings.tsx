@@ -10,6 +10,7 @@ import { useMe } from "../../auth/hooks/useMe";
 import { useUpdateProfile } from "../hooks/useUpdateProfile";
 import { zodResolver } from "@hookform/resolvers/zod";
 import toast from "react-hot-toast";
+import { getUserImageUrl } from "../../../utils/getImageUrl";
 
 export const AccountSettings = () => {
   const [photo, setPhoto] = useState<File | null>(null);
@@ -97,7 +98,7 @@ export const AccountSettings = () => {
               src={
                 preview ??
                 (user?.photo
-                  ? `http://localhost:3000/img/users/${user.photo}`
+                  ? getUserImageUrl(user.photo)
                   : "/img/default-user.jpg")
               }
               alt={user?.name}
