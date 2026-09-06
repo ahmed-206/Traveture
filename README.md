@@ -2,6 +2,11 @@
 
 Traveture is a full-stack tour discovery and booking platform. It combines a React client with an Express and MongoDB API for browsing tours, managing accounts, saving favourites, submitting reviews, and creating tour bookings.
 
+**[Live Demo](https://traveture.vercel.app/))** 
+
+> Demo credentials — try any role instantly:
+> - **Admin:** admin@traveture.io / test1234
+> - **User:** loulou@example.com / test1234
 ## Highlights
 
 - Browse, filter, sort, paginate, and view detailed tour information
