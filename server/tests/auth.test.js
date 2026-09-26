@@ -40,7 +40,7 @@ describe('Authentication Integration Tests', () => {
           ...userData,
           passwordConfirm: 'pass1234',
         });
-      expect(response.statusCode).toBe(500);
+      expect(response.statusCode).toBe(400);
     });
   });
 

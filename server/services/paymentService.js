@@ -2,9 +2,9 @@ import Stripe from 'stripe';
 import { createBooking } from './bookingService.js';
 import AppError from '../utils/appError.js';
 
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
 
 export const createCheckoutSession = async ({ userId, tourId, guests, startDate }) => {
+  const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
   const booking = await createBooking({ userId, tourId, guests, startDate });
 
   if (!booking) {

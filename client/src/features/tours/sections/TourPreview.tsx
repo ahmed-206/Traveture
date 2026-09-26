@@ -79,7 +79,7 @@ export const TourPreview = ({ tour, onBookTour }: TourPreviewProps) => {
             </p>
 
             <Link
-              to="/booking"
+              to={`/booking/${tour._id}`}
               onClick={onBookTour}
               className="bg-primary text-white font-bold text-lg px-8 py-3.5 rounded-input shadow-lg hover:shadow-xl hover:scale-105 transition-all duration-300 active:scale-95 cursor-pointer"
             >

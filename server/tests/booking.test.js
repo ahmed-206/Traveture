@@ -38,6 +38,7 @@ const adminCredentials = {
 };
 
 const futureDate = new Date('2028-06-15');
+const secondFutureDate = new Date('2028-07-20');
 
 const tourData = {
   name: 'The Forest Adventure Test',
@@ -47,7 +48,7 @@ const tourData = {
   price: 250,
   summary: 'A beautiful forest hike for testing',
   imageCover: 'tour-cover.jpg',
-  startDates: [futureDate],
+  startDates: [futureDate, secondFutureDate],
 };
 
 const signupAndGetCookies = async (credentials) => {
@@ -209,7 +210,14 @@ describe('Booking Integration Tests', () => {
         startDate: futureDate,
       });
 
-      const res = await createBookingViaAPI(userCookies, {
+      const otherCookies = await signupAndGetCookies({
+        name: 'Another User',
+        email: 'another@test.com',
+        password: 'test1234',
+        passwordConfirm: 'test1234',
+      });
+
+      const res = await createBookingViaAPI(otherCookies, {
         tourId: tour._id,
         guests: 3,
         startDate: futureDate,
@@ -225,7 +233,14 @@ describe('Booking Integration Tests', () => {
         startDate: futureDate,
       });
 
-      const res = await createBookingViaAPI(userCookies, {
+      const otherCookies = await signupAndGetCookies({
+        name: 'Second User',
+        email: 'second@test.com',
+        password: 'test1234',
+        passwordConfirm: 'test1234',
+      });
+
+      const res = await createBookingViaAPI(otherCookies, {
         tourId: tour._id,
         guests: 3,
         startDate: futureDate,
@@ -276,7 +291,7 @@ describe('Booking Integration Tests', () => {
       await createBookingViaAPI(userCookies, {
         tourId: tour._id,
         guests: 2,
-        startDate: futureDate,
+        startDate: secondFutureDate,
       });
 
       const otherCookies = await signupAndGetCookies({

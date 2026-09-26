@@ -59,6 +59,13 @@ bookingSchema.pre(/^find/, async function () {
   });
 });
 
+bookingSchema.index(
+  { user: 1, tour: 1, startDate: 1 },
+  {
+    unique: true,
+    partialFilterExpression: { status: 'pending' }, // بس على الـ pending، مش على كل الحجوزات
+  },
+);
 const Booking = mongoose.model('Booking', bookingSchema);
 
 export default Booking;

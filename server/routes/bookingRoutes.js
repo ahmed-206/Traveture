@@ -1,6 +1,7 @@
 import express from 'express';
 import * as authController from '../controllers/authController.js';
 import * as bookingController from '../controllers/bookingController.js';
+import * as checkoutController from '../controllers/checkoutController.js';
 
 const router = express.Router();
 
@@ -17,6 +18,10 @@ router
 router
   .route('/')
   .post(authController.restrictTo('user'), bookingController.createBooking);
+
+router
+  .route('/checkout-session')
+  .post(authController.restrictTo('user'), checkoutController.createCheckoutSessionHandler);
 
 // Admin routes
 router.use(authController.restrictTo('admin'));

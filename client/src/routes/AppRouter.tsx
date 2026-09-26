@@ -12,6 +12,7 @@ import ForgotPassword from "../features/auth/pages/ForgotPassword";
 import ResetPassword from "../features/auth/pages/ResetPassword";
 import { Favorites } from "../features/favorites/pages/FavoritesPage";
 import { BookingPage } from "../features/bookings/pages/BookingPage";
+import { BookingSuccessPage } from "../features/bookings/pages/BookingSuccessPage";
 
 const router = createBrowserRouter([
   {
@@ -70,13 +71,21 @@ const router = createBrowserRouter([
     ),
   },
   {
-    path: "booking",
+    path: "booking/:tourId",
     element: (
-       <ProtectRoute>
+      <ProtectRoute>
         <BookingPage />
       </ProtectRoute>
-    )
-  }
+    ),
+  },
+  {
+    path: "bookings/success",
+    element: (
+      <ProtectRoute>
+        <BookingSuccessPage />
+      </ProtectRoute>
+    ),
+  },
 ]);
 
 const AppRouter = () => {
@@ -84,3 +93,4 @@ const AppRouter = () => {
 };
 
 export default AppRouter;
+

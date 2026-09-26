@@ -7,7 +7,7 @@ import {
 } from '../utils/cookieOptions.js';
 import AppError from '../utils/appError.js';
 import sendResponse from '../utils/sendResponse.js';
-import User from '../models/userModel.js';
+
 
 // //////////////////////////////////////////////////////////
 

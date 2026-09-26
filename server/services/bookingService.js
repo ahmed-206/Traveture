@@ -3,9 +3,9 @@ import Booking from '../models/bookingModel.js';
 import Tour from '../models/tourModel.js';
 import AppError from '../utils/appError.js';
 
-
 const VALID_STATUSES = Booking.schema.path('status').options.enum;
-const VALID_PAYMENT_STATUSES = Booking.schema.path('paymentStatus').options.enum;
+const VALID_PAYMENT_STATUSES =
+  Booking.schema.path('paymentStatus').options.enum;
 const ADMIN_ALLOWED_FIELDS = ['status', 'paymentStatus'];
 
 const filterBody = (body, ...allowedFields) => {
@@ -15,7 +15,6 @@ const filterBody = (body, ...allowedFields) => {
   });
   return filtered;
 };
-
 
 export const getBookedGuests = async (tourId, startDate, session = null) => {
   const result = await Booking.aggregate([
@@ -32,11 +31,32 @@ export const getBookedGuests = async (tourId, startDate, session = null) => {
   return result.length > 0 ? result[0].totalGuests : 0;
 };
 
+
+
 export const createBooking = async ({ userId, tourId, guests, startDate }) => {
   if (!Number.isInteger(guests) || guests < 1) {
     throw new AppError('Guests must be a positive integer', 400);
   }
 
+   if (!mongoose.Types.ObjectId.isValid(tourId)) {
+    throw new AppError('Invalid tour id', 400);
+  }
+   const parsedStartDate = new Date(startDate);
+  if (!startDate || isNaN(parsedStartDate.getTime())) {
+    throw new AppError('A valid start date is required', 400);
+  }
+
+  // الحماية من التكرار
+  const existingPendingBooking = await Booking.findOne({
+    user: userId,
+    tour: tourId,
+    startDate: new Date(startDate),
+    status: 'pending',
+  });
+
+  if (existingPendingBooking) {
+    return existingPendingBooking;
+  }
   const session = await mongoose.startSession();
   try {
     let booking = null;
@@ -62,21 +82,31 @@ export const createBooking = async ({ userId, tourId, guests, startDate }) => {
       }
 
       const price = tour.price * guests;
-      const created = await Booking.create(
-        [
-          {
-            user: userId,
-            tour: tourId,
-            guests,
-            price,
-            startDate,
-            status: 'pending',
-            paymentStatus: 'pending',
-          },
-        ],
-        { session },
-      );
-      booking = created[0];
+      try {
+        const created = await Booking.create(
+          [
+            {
+              user: userId,
+              tour: tourId,
+              guests,
+              price,
+              startDate,
+              status: 'pending',
+              paymentStatus: 'pending',
+            },
+          ],
+          { session },
+        );
+        booking = created[0];
+      } catch (err) {
+        if (err.code === 11000) {
+          throw new AppError(
+            'You already have a pending booking for this tour and date',
+            409,
+          );
+        }
+        throw err;
+      }
     });
 
     return booking;
@@ -104,9 +134,7 @@ export const cancelBooking = async ({ bookingId, userId = null }) => {
   return booking;
 };
 
-
 export const updateBookingService = async (bookingId, bodyData) => {
-
   const filteredBody = filterBody(bodyData, ...ADMIN_ALLOWED_FIELDS);
   if (Object.keys(filteredBody).length === 0) {
     throw new AppError(
@@ -115,7 +143,6 @@ export const updateBookingService = async (bookingId, bodyData) => {
     );
   }
 
-
   if (filteredBody.status && !VALID_STATUSES.includes(filteredBody.status)) {
     throw new AppError(
       `Invalid status. Must be one of: ${VALID_STATUSES.join(', ')}`,
@@ -123,7 +150,6 @@ export const updateBookingService = async (bookingId, bodyData) => {
     );
   }
 
- 
   if (
     filteredBody.paymentStatus &&
     !VALID_PAYMENT_STATUSES.includes(filteredBody.paymentStatus)
@@ -134,7 +160,6 @@ export const updateBookingService = async (bookingId, bodyData) => {
     );
   }
 
- 
   const booking = await Booking.findByIdAndUpdate(bookingId, filteredBody, {
     new: true,
     runValidators: true,
