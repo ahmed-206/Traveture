@@ -5,6 +5,7 @@ import {
   resizeUserPhoto,
   uploadUserPhoto,
 } from '../middleware/uploadUserPhoto.js';
+import { forgotPasswordLimiter } from '../middleware/rateLimiter.js';
 const router = express.Router();
 
 // Public routes
@@ -12,7 +13,7 @@ router.post('/signup', authController.signup);
 router.post('/login', authController.login);
 router.post('/refresh', authController.refresh);
 router.get('/logout', authController.logout);
-router.post('/forgotPassword', authController.forgotPassword);
+router.post('/forgotPassword', forgotPasswordLimiter, authController.forgotPassword);
 router.patch('/resetPassword/:token', authController.resetPassword);
 
 // Protect routes

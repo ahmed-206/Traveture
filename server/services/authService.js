@@ -5,6 +5,7 @@ import User from '../models/userModel.js';
 import { generateAuthTokens, hashToken } from './tokenService.js';
 import { sendEmail } from './emailService.js';
 import AppError from '../utils/appError.js';
+import validator from 'validator';
 
 const saveRefreshToken = async (user, refreshToken) => {
   user.refreshTokenHash = hashToken(refreshToken);
@@ -138,25 +139,51 @@ export const refreshTokens = async (currentRefreshToken) => {
 };
 
 // Forgot password
+const RESET_COOLDOWN_MS = 60 * 1000; // 60 seconds cooldown between reset emails per user
+
 export const forgotPassword = async (userEmail, requestUrl) => {
   const genericResponse = {
     success: true,
     message: 'If that email exists, a reset link has been sent.',
   };
-  const user = await User.findOne({ email: userEmail.trim().toLowerCase() });
+
+  if (typeof userEmail !== 'string' || !validator.isEmail(userEmail.trim())) {
+    throw new AppError('Please provide a valid email', 400);
+  }
+
+  const cooldownThreshold = new Date(Date.now() - RESET_COOLDOWN_MS);
+
+  const user = await User.findOneAndUpdate(
+    {
+      email: userEmail.trim().toLowerCase(),
+      $or: [
+        { passwordResetRequestedAt: null },
+        { passwordResetRequestedAt: { $lt: cooldownThreshold } },
+      ],
+    },
+    { passwordResetRequestedAt: new Date() },
+    { new: true },
+  );
+
   if (!user) {
     return genericResponse;
   }
+
   const resetToken = user.createPasswordResetToken();
   await user.save({ validateBeforeSave: false });
 
   const resetURL = `${requestUrl}/resetPassword/${resetToken}`;
-  const message = `Forgot your password? Submit the PATCH request with your new password and passwordConfirm
-  to:
+  const message = `Hi ${user.name.split(' ')[0]},
 
-  ${resetURL}
-  
-  If you didn't forgot your password please ignore this email`;
+We received a request to reset the password for your Traveture account.
+
+Click the link below to choose a new password. The link is valid for 10 minutes:
+
+${resetURL}
+
+If you didn't request this, you can safely ignore this email. Your password will stay the same.
+
+The Traveture Team`;
 
   try {
     await sendEmail({
@@ -164,20 +191,21 @@ export const forgotPassword = async (userEmail, requestUrl) => {
       subject: 'Your password reset token (valid for 10 min)',
       message,
     });
-    return genericResponse;
   } catch (error) {
+    console.error('[forgotPassword] Failed to send email:', error);
     user.passwordResetToken = undefined;
     user.passwordResetExpires = undefined;
+    user.passwordResetRequestedAt = undefined;
     await user.save({ validateBeforeSave: false });
-    throw new AppError(
-      'There was an error sending the email. Try again later.',
-      500,
-    );
   }
+  return genericResponse;
 };
 
-// Resest Password
+// Reset Password
 export const resetPassword = async ({ token, password, passwordConfirm }) => {
+  if (typeof token !== 'string' || !password || !passwordConfirm) {
+    throw new AppError('Token, password and passwordConfirm are required', 400);
+  }
   const hashedToken = crypto.createHash('sha256').update(token).digest('hex');
 
   const user = await User.findOne({
@@ -188,10 +216,15 @@ export const resetPassword = async ({ token, password, passwordConfirm }) => {
   if (!user) {
     throw new AppError('Token is invalid or has expired', 400);
   }
+
   user.password = password;
   user.passwordConfirm = passwordConfirm;
   user.passwordResetToken = undefined;
   user.passwordResetExpires = undefined;
+  user.passwordResetRequestedAt = undefined;
+
+  // Invalidate all existing sessions so old refresh tokens can't be reused
+  user.refreshTokenHash = undefined;
   await user.save();
 
   return createAuthResponse(user);
@@ -212,8 +245,13 @@ export const updatePassword = async ({
   if (!(await user.isPasswordCorrect(currentPassword, user.password))) {
     throw new AppError('Incorrect password', 401);
   }
+
   user.password = password;
   user.passwordConfirm = passwordConfirm;
+
+  // Invalidate old session before issuing new tokens
+  user.refreshTokenHash = undefined;
   await user.save();
+
   return createAuthResponse(user);
 };
