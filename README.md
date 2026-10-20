@@ -1,93 +1,96 @@
 # Traveture
 
-Full-stack tour discovery and booking platform — browse tours, manage bookings with real-time seat availability, save favourites, and check out with Stripe.
+A full-stack tour discovery and booking platform built with React, TypeScript, Node.js, Express, and MongoDB. Users can explore tours, manage their accounts, save favourites, submit reviews, and make bookings.
 
 **[Live Demo](https://traveture.vercel.app)**
 
-> **Try it instantly** — no signup required:
-> | Role | Email | Password |
-> |---|---|---|
-> | Admin | `admin@traveture.io` | `test1234` |
-> | User | `loulou@example.com` | `test1234` |
+### Demo Accounts
 
----
+Try the application without creating an account:
+
+| Role  | Email                | Password   |
+| ----- | -------------------- | ---------- |
+| Admin | `admin@traveture.io` | `test1234` |
+| User  | `loulou@example.com` | `test1234` |
+
+*These are demo credentials intended for application evaluation.*
 
 ## Tech Stack
 
-**Client** — React 19 · TypeScript · Vite · Tailwind CSS · TanStack Query · React Hook Form + Zod · React Leaflet
+**Frontend:** React 19, TypeScript, Vite, Tailwind CSS, TanStack Query, React Hook Form, Zod, React Leaflet
 
-**Server** — Node.js · Express 5 · MongoDB / Mongoose · JWT (HTTP-only cookies) · Stripe · Nodemailer
+**Backend:** Node.js, Express 5, MongoDB, Mongoose, REST APIs
 
-**Testing** — Vitest · Supertest
+**Authentication & Payments:** JWT, HTTP-only Cookies, Refresh Token Rotation, Stripe Checkout, Stripe Webhooks
 
----
+**Testing:** Vitest, Supertest
 
-## Features
+**Other Integrations:** Nodemailer
 
--  Browse, filter, sort, and paginate tours with interactive maps and reviews
--  Cookie-based JWT auth with access/refresh tokens, password reset, and profile management
--  Save and manage favourite tours
--  Book tours with per-start-date capacity checks that prevent overbooking
--  Stripe Checkout with signed webhook confirmation
--  Role-based access control (`user`, `lead-guide`, `admin`)
--  Integration test suite covering auth, bookings, favourites, and permissions
+## Key Features
 
-## Project Structure
+* **Tour Discovery:** Browse, filter, sort, and paginate tours, with interactive maps, ratings, and reviews.
+* **Authentication:** Implemented signup, login, logout, access and refresh tokens, password reset, and profile management.
+* **Access Control:** Enforced role-based permissions for users, lead guides, and administrators.
+* **Favourites:** Allow authenticated users to save and manage their favourite tours.
+* **Booking Management:** Validate tour availability for specific start dates and enforce booking capacity rules.
+* **Payment Integration:** Integrated Stripe Checkout and webhook handling for payment event processing.
+* **Reviews:** Support tour reviews through dedicated API endpoints.
 
-```text
-Traveture/
-├── client/          # React + TypeScript app
-│   └── src/
-│       ├── api/
-│       ├── components/
-│       ├── features/   # auth, tours, favourites, profile, bookings
-│       └── routes/
-└── server/          # Express REST API
-    ├── controllers/
-    ├── models/          # User, Tour, Booking, Review
-    ├── services/
-    ├── routes/
-    └── tests/
-```
+## Architecture & Implementation
 
-## API Overview
+* **MVC-Based Backend:** Organized backend responsibilities across models, controllers, and routes, with a separate service layer for business logic.
+* **Server-Side Filtering & Pagination:** Implemented tour filtering, sorting, and pagination on the backend to retrieve the requested results from the database.
+* **Authentication & Session Management:** Implemented cookie-based JWT authentication using access and refresh tokens, with refresh token rotation and protected routes.
+* **Database Integration:** Used MongoDB and Mongoose to model application data and manage relationships between users, tours, bookings, and reviews.
+* **Booking Validation:** Implemented date-specific availability checks to enforce tour capacity rules during booking operations.
+* **Payment Event Handling:** Integrated Stripe webhooks to process payment events and update the application's payment workflow.
 
-| Resource | Endpoint | Access |
-| --- | --- | --- |
-| Auth & Users | `/api/v1/users` | Public / Authenticated |
-| Tours | `/api/v1/tours` | Public read · Admin/lead-guide write |
-| Bookings | `/api/v1/bookings` | Authenticated · Admin management |
-| Favourites | `/api/v1/favorites` | Authenticated |
-| Reviews | `/api/v1/reviews` | Authenticated |
-| Stripe Webhook | `/api/v1/stripe/webhook` | Stripe-signed |
+## Testing
 
-Booking states: `pending → confirmed → completed` (or `cancelled`) · Payment states: `pending → paid` (or `failed` / `refunded`)
+Implemented automated tests using Vitest and Supertest to verify backend behavior and API responses.
 
----
+* **Authentication:** Tested signup, login, and logout flows, including relevant invalid-input and authentication failure scenarios.
+* **Authorization:** Tested access restrictions for protected endpoints and role-based permissions.
+* **Bookings:** Tested booking-related API behavior and validation rules.
+* **Favourites:** Tested favourite management endpoints and their access requirements.
+
+*The test coverage described above should reflect the test cases implemented in the repository.*
 
 ## Getting Started
 
 ### Prerequisites
-- Node.js 20+
-- MongoDB (local or Atlas)
-- Stripe account + [Stripe CLI](https://stripe.com/docs/stripe-cli) for local webhook testing
+
+* Node.js 20+
+* MongoDB local instance or MongoDB Atlas account
+* Stripe account and Stripe CLI for local webhook testing
 
 ### Installation
 
+Clone the repository:
+
 ```bash
-git clone https://github.com/<your-username>/traveture.git
+git clone 
 cd traveture
+```
 
-# Install client
-cd client && npm install
+Install the client dependencies:
 
-# Install server
-cd ../server && npm install
+```bash
+cd client
+npm install
+```
+
+Install the server dependencies:
+
+```bash
+cd ../server
+npm install
 ```
 
 ### Environment Variables
 
-Create `server/.env`:
+Create a `server/.env` file and configure the environment variables required by the application:
 
 ```env
 NODE_ENV=development
@@ -112,14 +115,22 @@ EMAIL_USERNAME=your_smtp_username
 EMAIL_PASSWORD=your_smtp_password
 ```
 
+Use the exact environment variable names expected by the application. Never commit real credentials or secrets to version control.
+
 ### Run Locally
 
-```bash
-# Terminal 1 — API (http://localhost:3000)
-cd server && npm start
+Start the backend:
 
-# Terminal 2 — Client (http://localhost:5173)
-cd client && npm run dev
+```bash
+cd server
+npm start
+```
+
+Start the frontend in a separate terminal:
+
+```bash
+cd client
+npm run dev
 ```
 
 ### Run Tests
@@ -135,15 +146,9 @@ npm run test:run
 stripe listen --forward-to localhost:3000/api/v1/stripe/webhook
 ```
 
----
-
 ## Roadmap
 
-- [ ] Admin dashboard for managing tours, users, and bookings
-- [ ] In-app notifications for booking and account activity
-- [ ] Email notifications for confirmations and payments
-- [ ] Full client-side checkout flow
-- [ ] Enhanced booking history and analytics
-
----
-
+* [ ] In-app notifications for booking and account activity
+* [ ] Email notifications for booking confirmations and payments
+* [ ] Complete client-side checkout experience
+* [ ] Enhanced booking history and analytics
