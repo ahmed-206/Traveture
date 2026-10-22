@@ -1,10 +1,6 @@
 import Tour from '../models/tourModel.js';
 import Booking from '../models/bookingModel.js';
 
-const BOOKING_STATUSES = Booking.schema.path('status').options.enum;
-const PAYMENT_STATUSES = Booking.schema.path('paymentStatus').options.enum;
-
-
 const toCountMap = (rows, keys) => {
   const map = Object.fromEntries(keys.map((key) => [key, 0]));
   rows.forEach(({ _id, count }) => {
@@ -39,7 +35,9 @@ const getTourStats = async () => {
 };
 
 const getBookingStats = async () => {
-  
+  const BOOKING_STATUSES = Booking.schema.path('status').options.enum;
+  const PAYMENT_STATUSES = Booking.schema.path('paymentStatus').options.enum;
+
   const [result] = await Booking.aggregate([
     {
       $facet: {
