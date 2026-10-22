@@ -243,7 +243,7 @@ export const updatePassword = async ({
   }
 
   if (!(await user.isPasswordCorrect(currentPassword, user.password))) {
-    throw new AppError('Incorrect password', 401);
+    throw new AppError('Incorrect password', 400);
   }
 
   user.password = password;

@@ -1,35 +1,70 @@
-import type { UserRole } from "../features/auth/types/user.types";
+import type { IconType } from "react-icons";
+import {
+  FaGear,
+  FaHeart,
+  FaChartLine,
+  FaMapLocationDot,
+  FaSuitcaseRolling,
+  FaTicketSimple,
+} from "react-icons/fa6";
 
-interface sidebarItem {
-  id: string;
+export type UserRole = "user" | "guide" | "lead-guide" | "admin";
+
+export interface MenuItem {
+  to: string;
   label: string;
+  icon: IconType;
+  end?: boolean;
 }
-export const menuConfig: Record<UserRole, sidebarItem[]> = {
-  user: [
-    { id: "settings", label: "Settings" },
-    { id: "bookings", label: "My Bookings" },
-    { id: "reviews", label: "My Reviews" },
-    { id: "billing", label: "Billing" },
-  ],
 
-  guide: [
-    { id: "settings", label: "Settings" },
-    { id: "bookings", label: "My Bookings" },
-    { id: "reviews", label: "My Reviews" },
-  ],
+export interface MenuSection {
+  title?: string;
+  items: MenuItem[];
+}
 
-  "lead-guide": [
-    { id: "settings", label: "Settings" },
-    { id: "bookings", label: "My Bookings" },
-    { id: "reviews", label: "My Reviews" },
-    { id: "billing", label: "Billing" },
-  ],
-
-  admin: [
-    { id: "dashboard", label: "Dashboard" },
-    { id: "tours", label: "Tours" },
-    { id: "users", label: "Users" },
-    { id: "reviews", label: "Reviews" },
-    { id: "settings", label: "Settings" },
-  ],
+const settings: MenuItem = {
+  to: "/profile/settings",
+  label: "Settings",
+  icon: FaGear,
 };
+const favorites: MenuItem = {
+  to: "/profile/favorites",
+  label: "Favorites",
+  icon: FaHeart,
+};
+const myBookings: MenuItem = {
+  to: "/profile/bookings",
+  label: "My Bookings",
+  icon: FaSuitcaseRolling,
+};
+
+const overview: MenuItem = {
+  to: "/admin",
+  label: "Dashboard",
+  icon: FaChartLine,
+  end: true,
+};
+const manageTours: MenuItem = {
+  to: "/admin/tours",
+  label: "Tours",
+  icon: FaMapLocationDot,
+};
+const manageBookings: MenuItem = {
+  to: "/admin/bookings",
+  label: "Bookings",
+  icon: FaTicketSimple,
+};
+
+// Record<UserRole, ...> fails the build if a role has no menu.
+export const menuConfig: Record<UserRole, MenuSection[]> = {
+  user: [{ items: [settings, favorites, myBookings] }],
+  guide: [{ items: [settings] }],
+  "lead-guide": [
+    { items: [settings] },
+    { items: [manageTours] },
+  ],
+  admin: [
+    { items: [settings] },
+    { items: [overview, manageTours, manageBookings] },
+  ],
+};

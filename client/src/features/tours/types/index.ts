@@ -43,6 +43,7 @@ export interface Tour {
   ratingsAverage: number;
   ratingsQuantity: number;
   price: number;
+  priceDiscount?: number;
   summary: string;
   description?: string;
   imageCover: string;
