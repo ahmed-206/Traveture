@@ -1,7 +1,10 @@
 import mongoose from 'mongoose';
-import Booking from '../models/bookingModel.js';
+import Booking, { NO_POPULATE } from '../models/bookingModel.js';
 import Tour from '../models/tourModel.js';
 import AppError from '../utils/appError.js';
+import { SEAT_HOLDING_STATUSES } from '../utils/bookingStateMachine.js';
+import Availability from '../models/availabilityModel.js';
+import { runInTransaction } from '../utils/transaction.js';
 
 const VALID_STATUSES = Booking.schema.path('status').options.enum;
 const VALID_PAYMENT_STATUSES =
@@ -22,7 +25,7 @@ export const getBookedGuests = async (tourId, startDate, session = null) => {
       $match: {
         tour: new mongoose.Types.ObjectId(tourId),
         startDate: new Date(startDate),
-        status: { $in: ['pending', 'confirmed'] },
+        status: { $in: SEAT_HOLDING_STATUSES },
       },
     },
     { $group: { _id: null, totalGuests: { $sum: '$guests' } } },
@@ -31,89 +34,124 @@ export const getBookedGuests = async (tourId, startDate, session = null) => {
   return result.length > 0 ? result[0].totalGuests : 0;
 };
 
+const ensureAvailabilitySlot = async (tourId, startDate) => {
+  const exists = await Availability.exists({ tour: tourId, startDate });
+  if (exists) return;
+
+  const current = await getBookedGuests(tourId, startDate); 
+  try {
+    await Availability.updateOne(
+      { tour: tourId, startDate },
+      { $setOnInsert: { bookedGuests: current } },
+      { upsert: true },
+    );
+  } catch (err) {
+    if (err.code !== 11000) throw err; 
+  }
+};
+
+/** Condition + increment in ONE atomic operation on the shared slot document. */
+const reserveSeats = async ({ tour, startDate, guests, session }) => {
+  const slot = await Availability.findOneAndUpdate(
+    {
+      tour: tour._id,
+      startDate,
+      bookedGuests: { $lte: tour.maxGroupSize - guests },
+    },
+    { $inc: { bookedGuests: guests } },
+    { new: true, session },
+  );
+
+  if (!slot) {
+    const current = await Availability.findOne({ tour: tour._id, startDate }).session(session);
+    const available = Math.max(0, tour.maxGroupSize - (current?.bookedGuests ?? 0));
+    throw new AppError(
+      `Only ${available} spot(s) available out of ${tour.maxGroupSize}. You requested ${guests}.`,
+      400,
+    );
+  }
+};
+
+
+const findPendingBooking = (userId, tourId, startDate) =>
+  Booking.findOne({ user: userId, tour: tourId, startDate, status: 'pending' }).setOptions(
+    NO_POPULATE,
+  );
+
+
+const resolveExistingPending = (existing, guests) => {
+  if (existing.guests !== guests) {
+    throw new AppError(
+      'You already have a pending booking for this tour and date with a different number of guests. Complete or cancel it first.',
+      409,
+    );
+  }
+  return existing;
+};
 
 
 export const createBooking = async ({ userId, tourId, guests, startDate }) => {
   if (!Number.isInteger(guests) || guests < 1) {
     throw new AppError('Guests must be a positive integer', 400);
   }
-
-   if (!mongoose.Types.ObjectId.isValid(tourId)) {
+  if (!mongoose.Types.ObjectId.isValid(tourId)) {
     throw new AppError('Invalid tour id', 400);
   }
-   const parsedStartDate = new Date(startDate);
+  const parsedStartDate = new Date(startDate);
   if (!startDate || isNaN(parsedStartDate.getTime())) {
     throw new AppError('A valid start date is required', 400);
   }
 
-  // الحماية من التكرار
-  const existingPendingBooking = await Booking.findOne({
-    user: userId,
-    tour: tourId,
-    startDate: new Date(startDate),
-    status: 'pending',
-  });
 
-  if (existingPendingBooking) {
-    return existingPendingBooking;
-  }
-  const session = await mongoose.startSession();
+  const existing = await findPendingBooking(userId, tourId, parsedStartDate);
+  if (existing) return resolveExistingPending(existing, guests);
+
+ 
+  const tourPreview = await Tour.findById(tourId).select('startDates');
+  if (!tourPreview) throw new AppError('Tour not found', 404);
+  
+  const isValidDate = tourPreview.startDates.some(
+    (d) => d.getTime() === parsedStartDate.getTime(),
+  );
+  if (!isValidDate) throw new AppError('Invalid start date for this tour', 400);
+
+  await ensureAvailabilitySlot(tourPreview._id, parsedStartDate);
+
   try {
-    let booking = null;
-    await session.withTransaction(async () => {
+    return await runInTransaction(async (session) => {
+     
       const tour = await Tour.findById(tourId).session(session);
       if (!tour) throw new AppError('Tour not found', 404);
 
-      const isValidDate = tour.startDates.some(
-        (d) => d.getTime() === new Date(startDate).getTime(),
+      await reserveSeats({ tour, startDate: parsedStartDate, guests, session });
+
+      const [created] = await Booking.create(
+        [
+          {
+            user: userId,
+            tour: tourId,
+            guests,
+            price: Math.round(tour.price * guests * 100) / 100,
+            startDate: parsedStartDate,
+            status: 'pending',
+            paymentStatus: 'pending',
+          },
+        ],
+        { session },
       );
-      if (!isValidDate) {
-        throw new AppError('Invalid start date for this tour', 400);
-      }
-
-      const bookedGuests = await getBookedGuests(tour._id, startDate, session);
-      const availableSpots = tour.maxGroupSize - bookedGuests;
-
-      if (guests > availableSpots) {
-        throw new AppError(
-          `Only ${availableSpots} spot(s) available out of ${tour.maxGroupSize}. You requested ${guests}.`,
-          400,
-        );
-      }
-
-      const price = tour.price * guests;
-      try {
-        const created = await Booking.create(
-          [
-            {
-              user: userId,
-              tour: tourId,
-              guests,
-              price,
-              startDate,
-              status: 'pending',
-              paymentStatus: 'pending',
-            },
-          ],
-          { session },
-        );
-        booking = created[0];
-      } catch (err) {
-        if (err.code === 11000) {
-          throw new AppError(
-            'You already have a pending booking for this tour and date',
-            409,
-          );
-        }
-        throw err;
-      }
+      return created;
     });
-
-    return booking;
-  } finally {
-    await session.endSession();
+  } catch (err) {
+  
+    if (err.code === 11000) {
+      const concurrent = await findPendingBooking(userId, tourId, parsedStartDate);
+      if (concurrent) return resolveExistingPending(concurrent, guests);
+    }
+    throw err;
   }
 };
+
+
 
 export const cancelBooking = async ({ bookingId, userId = null }) => {
   const query = { _id: bookingId };
@@ -134,6 +172,8 @@ export const cancelBooking = async ({ bookingId, userId = null }) => {
   return booking;
 };
 
+
+
 export const updateBookingService = async (bookingId, bodyData) => {
   const filteredBody = filterBody(bodyData, ...ADMIN_ALLOWED_FIELDS);
   if (Object.keys(filteredBody).length === 0) {
@@ -149,7 +189,7 @@ export const updateBookingService = async (bookingId, bodyData) => {
       400,
     );
   }
-
+  
   if (
     filteredBody.paymentStatus &&
     !VALID_PAYMENT_STATUSES.includes(filteredBody.paymentStatus)
