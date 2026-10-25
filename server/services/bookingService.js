@@ -2,9 +2,11 @@ import mongoose from 'mongoose';
 import Booking, { NO_POPULATE } from '../models/bookingModel.js';
 import Tour from '../models/tourModel.js';
 import AppError from '../utils/appError.js';
-import { SEAT_HOLDING_STATUSES } from '../utils/bookingStateMachine.js';
+import { assertBookingTransition, assertPaymentTransition, holdsSeats, isFinalBookingStatus, SEAT_HOLDING_STATUSES, validateBookingChange } from '../utils/bookingStateMachine.js';
 import Availability from '../models/availabilityModel.js';
 import { runInTransaction } from '../utils/transaction.js';
+import { planCancellationRefund, processRefundRequest, queueRefund } from './refundService.js';
+import { expireCheckoutSession } from '../utils/stripe.js';
 
 const VALID_STATUSES = Booking.schema.path('status').options.enum;
 const VALID_PAYMENT_STATUSES =
@@ -17,6 +19,49 @@ const filterBody = (body, ...allowedFields) => {
     if (allowedFields.includes(key)) filtered[key] = body[key];
   });
   return filtered;
+};
+
+const releaseSeats = async ({ tourId, startDate, guests, session }) => {
+  const result = await Availability.updateOne(
+    { tour: tourId, startDate, bookedGuests: { $gte: guests } },
+    { $inc: { bookedGuests: -guests } },
+    { session },
+  );
+  if (result.modifiedCount !== 1) {
+    console.error(
+      `[Availability] Could not release ${guests} seat(s) for tour ${tourId} @ ${startDate.toISOString()} - counter drift, reconcile needed`,
+    );
+  }
+};
+export const transitionBooking = async ({
+  bookingId,
+  from,
+  status,
+  set = {},
+  where = {},
+  session,
+}) => {
+  const allowedFrom = [].concat(from);
+  allowedFrom.forEach((f) => assertBookingTransition(f, status));
+
+  const before = await Booking.findOneAndUpdate(
+    { _id: bookingId, status: { $in: allowedFrom }, ...where },
+    { $set: { ...set, status } },
+    { new: false, session, ...NO_POPULATE },
+  );
+  if (!before) return null;
+
+  if (set.paymentStatus) assertPaymentTransition(before.paymentStatus, set.paymentStatus);
+
+  if (holdsSeats(before.status) && !holdsSeats(status)) {
+    await releaseSeats({
+      tourId: before.tour,
+      startDate: before.startDate,
+      guests: before.guests,
+      session,
+    });
+  }
+  return before;
 };
 
 export const getBookedGuests = async (tourId, startDate, session = null) => {
@@ -153,11 +198,16 @@ export const createBooking = async ({ userId, tourId, guests, startDate }) => {
 
 
 
-export const cancelBooking = async ({ bookingId, userId = null }) => {
+export const cancelBooking = async ({
+  bookingId,
+  userId = null,
+  actor = 'user',
+  reason = null,
+}) => {
   const query = { _id: bookingId };
   if (userId) query.user = userId;
 
-  const booking = await Booking.findOne(query);
+  const booking = await Booking.findOne(query).setOptions(NO_POPULATE);
   if (!booking) throw new AppError('No booking found with that ID', 404);
 
   if (booking.status === 'cancelled') {
@@ -167,11 +217,64 @@ export const cancelBooking = async ({ bookingId, userId = null }) => {
     throw new AppError('Cannot cancel a completed booking', 400);
   }
 
-  booking.status = 'cancelled';
-  await booking.save();
-  return booking;
-};
+  const wasPending = booking.status === 'pending';
+  let refundPlan = null;
 
+  if (wasPending) {
+    if (booking.stripeSessionId) {
+      const result = await expireCheckoutSession(booking.stripeSessionId);
+      if (result === 'complete') {
+        throw new AppError(
+          'Payment for this booking was just completed. Please wait a moment for confirmation, then cancel it again.',
+          409,
+        );
+      }
+    }
+  } else {
+    refundPlan = planCancellationRefund({ booking, actor });
+  }
+
+  const refundRequest = await runInTransaction(async (session) => {
+    const before = await transitionBooking({
+      bookingId: booking._id,
+      from: booking.status,
+      status: 'cancelled',
+      where: { paymentStatus: wasPending ? 'pending' : 'paid' },
+      set: {
+        cancelledAt: new Date(),
+        cancelledBy: actor,
+        cancellationReason: reason,
+        ...(wasPending ? { paymentStatus: 'failed' } : {}),
+      },
+      session,
+    });
+    if (!before) {
+      throw new AppError('Booking was modified by another request. Please retry.', 409);
+    }
+
+    if (refundPlan && refundPlan.amountCents > 0) {
+      if (!refundPlan.paymentIntentId) {
+        console.warn(`[Cancel] Booking ${booking._id} has no Stripe payment: manual refund needed`);
+        return null;
+      }
+      return queueRefund(
+        {
+          bookingId: booking._id,
+          paymentIntentId: refundPlan.paymentIntentId,
+          amountCents: refundPlan.amountCents,
+          reason: 'booking_cancelled',
+          isBookingPayment: true,
+        },
+        session,
+      );
+    }
+    return null;
+  });
+
+  if (refundRequest) await processRefundRequest(refundRequest._id); // never throws
+
+  return Booking.findById(booking._id);
+};
 
 
 export const updateBookingService = async (bookingId, bodyData) => {
@@ -184,12 +287,8 @@ export const updateBookingService = async (bookingId, bodyData) => {
   }
 
   if (filteredBody.status && !VALID_STATUSES.includes(filteredBody.status)) {
-    throw new AppError(
-      `Invalid status. Must be one of: ${VALID_STATUSES.join(', ')}`,
-      400,
-    );
+    throw new AppError(`Invalid status. Must be one of: ${VALID_STATUSES.join(', ')}`, 400);
   }
-  
   if (
     filteredBody.paymentStatus &&
     !VALID_PAYMENT_STATUSES.includes(filteredBody.paymentStatus)
@@ -199,15 +298,54 @@ export const updateBookingService = async (bookingId, bodyData) => {
       400,
     );
   }
-
-  const booking = await Booking.findByIdAndUpdate(bookingId, filteredBody, {
-    new: true,
-    runValidators: true,
-  });
-
-  if (!booking) {
-    throw new AppError('No booking found with that ID', 404);
+  if (filteredBody.paymentStatus === 'refunded') {
+    throw new AppError('"refunded" is set automatically when a refund succeeds', 400);
   }
 
-  return booking;
+  const current = await Booking.findById(bookingId).setOptions(NO_POPULATE);
+  if (!current) throw new AppError('No booking found with that ID', 404);
+
+  if (isFinalBookingStatus(current.status)) {
+    throw new AppError(`A ${current.status} booking can no longer be modified`, 400);
+  }
+
+  // Cancelling is not a field edit: it releases seats, closes the Stripe session and refunds.
+  if (filteredBody.status === 'cancelled') {
+    if (filteredBody.paymentStatus) {
+      throw new AppError('Do not send paymentStatus together with status "cancelled"', 400);
+    }
+    return cancelBooking({ bookingId, actor: 'admin', reason: 'admin_cancelled' });
+  }
+
+  validateBookingChange(current, filteredBody);
+
+  // Guard on the state we validated against, so a concurrent change can't slip through
+  const updated = await Booking.findOneAndUpdate(
+    { _id: bookingId, status: current.status, paymentStatus: current.paymentStatus },
+    { $set: filteredBody },
+    { new: true, runValidators: true },
+  );
+  if (!updated) {
+    throw new AppError('Booking was modified by another request. Please retry.', 409);
+  }
+  return updated;
+};
+
+export const expireStalePendingBookings = async ({ olderThanMinutes = 65, limit = 100 } = {}) => {
+  const cutoff = new Date(Date.now() - olderThanMinutes * 60 * 1000);
+  const stale = await Booking.find({ status: 'pending', createdAt: { $lt: cutoff } })
+    .setOptions(NO_POPULATE)
+    .limit(limit);
+
+  let cancelled = 0;
+  for (const b of stale) {
+    try {
+      await cancelBooking({ bookingId: b._id, actor: 'system', reason: 'stale_pending' });
+      cancelled += 1;
+    } catch (err) {
+      // 409 = paid/modified in the meantime -> leave it alone
+      if (err.statusCode !== 409) console.error(`[Sweeper] ${b._id}: ${err.message}`);
+    }
+  }
+  return cancelled;
 };
