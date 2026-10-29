@@ -25,6 +25,7 @@ export const getAll = (Model) =>
     sendResponse(res, 200, { data: docs, results: docs.length, totalCount });
   });
 
+  
 export const getOne = (Model, populateOptions) =>
   catchAsync(async (req, res, next) => {
     let query = Model.findById(req.params.id);

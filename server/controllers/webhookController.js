@@ -1,55 +1,194 @@
-import Stripe from 'stripe';
-import Booking from '../models/bookingModel.js';
-import catchAsync from '../utils/catchAsync.js';
+import mongoose from 'mongoose';
+import Booking, { NO_POPULATE } from '../models/bookingModel.js';
 import ProcessedWebhookEvent from '../models/processedWebhookEventModel.js';
+import catchAsync from '../utils/catchAsync.js';
+import { getStripe, expireCheckoutSession } from '../utils/stripe.js';
+import { runInTransaction } from '../utils/transaction.js';
+import { transitionBooking } from '../services/bookingService.js';
+import { queueRefund, processRefundRequest } from '../services/refundService.js';
 
-const handleCheckoutCompleted = async (session) => {
-  const bookingId = session.client_reference_id;
-  console.log(`[Webhook] checkout.session.completed — booking: ${bookingId}`);
+const CURRENCY = 'usd';
 
-  const booking = await Booking.findByIdAndUpdate(
-    bookingId,
-    { status: 'confirmed', paymentStatus: 'paid' },
-    { new: true },
-  );
+const asId = (v) => (typeof v === 'string' ? v : v?.id ?? null);
 
-  if (!booking) {
-    console.error(`[Webhook] Unknown booking: ${bookingId}`);
-  }
+const queueRefundAndSchedule = async (params, { session, afterCommit }) => {
+  const request = await queueRefund(params, session);
+  // executed only AFTER the transaction commits (refund is an external side effect)
+  afterCommit.push(() => processRefundRequest(request._id));
 };
 
-const handleCheckoutExpired = async (session) => {
-  const bookingId = session.client_reference_id;
-  console.log(`[Webhook] checkout.session.expired — booking: ${bookingId}`);
 
-  if (!bookingId) return;
 
-  const booking = await Booking.findById(bookingId);
-  if (!booking) {
-    console.error(`[Webhook] Unknown booking for expired session: ${bookingId}`);
+const handleCheckoutPaid = async (cs, ctx) => {
+  const { session, afterCommit } = ctx;
+  const bookingId = cs.client_reference_id;
+  const paymentIntentId = asId(cs.payment_intent);
+  console.log(`[Webhook] checkout paid? booking=${bookingId} session=${cs.id}`);
+
+  if (cs.mode !== 'payment') return;
+
+  // 1) Was it really paid? 'completed' also fires for delayed methods that are still unpaid.
+  if (cs.payment_status !== 'paid') {
+    console.log(`[Webhook] ${cs.id} completed but payment_status=${cs.payment_status}; waiting`);
+    return;
+  }
+  if (!bookingId || !mongoose.isValidObjectId(bookingId) || !paymentIntentId) {
+    console.error(`[Webhook] CRITICAL paid session ${cs.id} cannot be linked to a booking / payment`);
     return;
   }
 
-  if (booking.status === 'pending') {
-    booking.status = 'cancelled';
-    booking.paymentStatus = 'failed';
-    await booking.save();
-    console.log(`[Webhook] Released pending booking: ${bookingId}`);
+  const booking = await Booking.findById(bookingId).session(session).setOptions(NO_POPULATE);
+  if (!booking) {
+    console.error(`[Webhook] CRITICAL paid session ${cs.id} (PI ${paymentIntentId}): unknown booking ${bookingId}`);
+    return;
   }
+
+  // 2) Verify the money matches what we asked for
+  const expectedCents = Math.round(booking.price * 100);
+  if (cs.amount_total !== expectedCents || cs.currency !== CURRENCY) {
+    console.error(
+      `[Webhook] Amount mismatch booking=${bookingId}: expected ${expectedCents} ${CURRENCY}, got ${cs.amount_total} ${cs.currency}. Refunding.`,
+    );
+    await queueRefundAndSchedule(
+      {
+        bookingId: booking._id,
+        paymentIntentId,
+        amountCents: cs.amount_total,
+        reason: 'amount_mismatch',
+        isBookingPayment: false,
+      },
+      ctx,
+    );
+    return;
+  }
+
+  // 3) Happy path: atomic pending -> confirmed
+  const before = await transitionBooking({
+    bookingId,
+    from: 'pending',
+    status: 'confirmed',
+    where: { paymentStatus: 'pending' },
+    set: {
+      paymentStatus: 'paid',
+      stripePaymentIntentId: paymentIntentId,
+      stripeSessionId: cs.id,
+      amountPaidCents: cs.amount_total,
+    },
+    session,
+  });
+  if (before) {
+    console.log(`[Webhook] Booking ${bookingId} confirmed`);
+    // If a different (older/orphan) session was recorded, close it so it can't be paid too
+    if (before.stripeSessionId && before.stripeSessionId !== cs.id) {
+      afterCommit.push(() => expireCheckoutSession(before.stripeSessionId));
+    }
+    return;
+  }
+
+  // 4) Booking was not pending/unpaid. Work out why, each case on its own.
+  if (booking.stripePaymentIntentId === paymentIntentId) {
+    return; 
+  }
+
+  if (booking.status === 'cancelled' && booking.paymentStatus !== 'paid') {
+    // Customer paid after the booking was cancelled/expired: record it and refund in full.
+    console.error(`[Webhook] Payment on cancelled booking ${bookingId}. Refunding.`);
+    await Booking.updateOne(
+      { _id: bookingId, status: 'cancelled', paymentStatus: { $in: ['pending', 'failed'] } },
+      {
+        $set: {
+          paymentStatus: 'paid',
+          stripePaymentIntentId: paymentIntentId,
+          stripeSessionId: cs.id,
+          amountPaidCents: cs.amount_total,
+        },
+      },
+      { session },
+    );
+    await queueRefundAndSchedule(
+      {
+        bookingId: booking._id,
+        paymentIntentId,
+        amountCents: cs.amount_total,
+        reason: 'payment_on_cancelled_booking',
+        isBookingPayment: true,
+      },
+      ctx,
+    );
+    return;
+  }
+
+  // Already paid with a different payment -> second payment for the same booking
+  console.error(`[Webhook] Duplicate payment for booking ${bookingId} (PI ${paymentIntentId}). Refunding.`);
+  await queueRefundAndSchedule(
+    {
+      bookingId: booking._id,
+      paymentIntentId,
+      amountCents: cs.amount_total,
+      reason: 'duplicate_payment',
+      isBookingPayment: false,
+    },
+    ctx,
+  );
+};
+
+const handleCheckoutClosedUnpaid = async (cs, { session }, reason) => {
+  const bookingId = cs.client_reference_id;
+  console.log(`[Webhook] ${reason} booking=${bookingId} session=${cs.id}`);
+  if (!bookingId || !mongoose.isValidObjectId(bookingId)) return;
+
+  const before = await transitionBooking({
+    bookingId,
+    from: 'pending',
+    status: 'cancelled',
+    where: { paymentStatus: 'pending', stripeSessionId: { $in: [cs.id, null] } },
+    set: {
+      paymentStatus: 'failed',
+      cancelledAt: new Date(),
+      cancelledBy: 'system',
+      cancellationReason: reason,
+    },
+    session,
+  });
+
+  console.log(
+    before
+      ? `[Webhook] Released pending booking ${bookingId}`
+      : `[Webhook] Skipped ${reason} for ${bookingId}: not pending, or belongs to another session`,
+  );
 };
 
 const handlePaymentFailed = async (paymentIntent) => {
-  console.log(`[Webhook] payment_intent.payment_failed — PI: ${paymentIntent.id}`);
+ 
+  console.log(`[Webhook] payment_intent.payment_failed PI=${paymentIntent.id}`);
+};
+
+const dispatchEvent = async (event, ctx) => {
+  const obj = event.data.object;
+  switch (event.type) {
+    case 'checkout.session.completed':
+    case 'checkout.session.async_payment_succeeded':
+      return handleCheckoutPaid(obj, ctx);
+    case 'checkout.session.expired':
+      return handleCheckoutClosedUnpaid(obj, ctx, 'checkout_expired');
+    case 'checkout.session.async_payment_failed':
+      return handleCheckoutClosedUnpaid(obj, ctx, 'async_payment_failed');
+    case 'payment_intent.payment_failed':
+      return handlePaymentFailed(obj);
+    default:
+      console.log(`[Webhook] Unhandled event type: ${event.type}`);
+  }
 };
 
 
+
 export const handleStripeWebhook = catchAsync(async (req, res) => {
-  const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
+  const stripe = getStripe();
   let event;
 
   try {
     event = stripe.webhooks.constructEvent(
-      req.body,
+      req.body, 
       req.headers['stripe-signature'],
       process.env.STRIPE_WEBHOOK_SECRET,
     );
@@ -59,33 +198,29 @@ export const handleStripeWebhook = catchAsync(async (req, res) => {
   }
 
 
-  //Idempotency check
+  const afterCommit = [];
   try {
-    await ProcessedWebhookEvent.create({
-      eventId: event.id,
-      eventType: event.type,
+    await runInTransaction(async (session) => {
+      afterCommit.length = 0; // the callback may re-run on transient errors
+      await ProcessedWebhookEvent.create([{ eventId: event.id, eventType: event.type }], {
+        session,
+      });
+      await dispatchEvent(event, { session, afterCommit });
     });
   } catch (err) {
-    if (err.code === 11000) {
-      // duplicate key — الـ event ده اتعالج قبل كده، تجاهله بأمان
+    if (err.code === 11000 && (err.keyPattern?.eventId || /eventId/.test(err.message))) {
       console.log(`[Webhook] Duplicate event ignored: ${event.id}`);
       return res.status(200).json({ received: true, duplicate: true });
     }
     throw err; 
   }
 
-  switch (event.type) {
-    case 'checkout.session.completed':
-      await handleCheckoutCompleted(event.data.object);
-      break;
-    case 'checkout.session.expired':
-      await handleCheckoutExpired(event.data.object);
-      break;
-    case 'payment_intent.payment_failed':
-      await handlePaymentFailed(event.data.object);
-      break;
-    default:
-      console.log(`[Webhook] Unhandled event type: ${event.type}`);
+  for (const task of afterCommit) {
+    try {
+      await task();
+    } catch (err) {
+      console.error(`[Webhook] Post-commit task failed for ${event.id}: ${err.message}`);
+    }
   }
 
   res.status(200).json({ received: true });
