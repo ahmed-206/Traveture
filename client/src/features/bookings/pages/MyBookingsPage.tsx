@@ -13,6 +13,7 @@ import { StatusBadge } from "../../admin/components/BookingStatus";
 import { CancelBookingModal } from "../components/CancelBookingModal";
 import { formatCurrency, formatDate } from "../../admin/utils/formatters";
 import type { Booking } from "../types";
+import { getTourImageUrl } from "../../../utils/getImageUrl";
 
 // ─── Booking Card ─────────────────────────────────────────────────────────────
 
@@ -32,7 +33,7 @@ const BookingCard = ({
       <div className="relative h-36 w-full bg-gray-100">
         {booking.tour?.imageCover ? (
           <img
-            src={booking.tour.imageCover}
+            src={getTourImageUrl(booking.tour.imageCover)}
             alt={booking.tour.name}
             className="h-full w-full object-cover"
           />
