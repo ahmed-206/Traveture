@@ -540,6 +540,8 @@ describe('Booking Integration Tests', () => {
     });
 
     it('should update status to confirmed', async () => {
+      await Booking.findByIdAndUpdate(bookingId, { paymentStatus: 'paid' });
+
       const res = await request(app)
         .patch(`/api/v1/bookings/${bookingId}`)
         .set('Cookie', adminCookies)
