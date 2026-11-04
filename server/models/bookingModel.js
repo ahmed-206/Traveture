@@ -34,6 +34,8 @@ const bookingSchema = new mongoose.Schema(
       required: [true, 'Booking must specify a start date'],
     },
 
+    endDate: { type: Date, default: null },
+
     paymentStatus: {
       type: String,
       enum: ['pending', 'paid', 'failed', 'refunded'],
@@ -78,6 +80,7 @@ bookingSchema.pre(/^find/, async function () {
   });
 });
 
+
 bookingSchema.index(
   { user: 1, tour: 1, startDate: 1 },
   {
@@ -86,6 +89,7 @@ bookingSchema.index(
   },
 );
 
+// A Stripe session / payment intent can belong to one booking only
 bookingSchema.index(
   { stripeSessionId: 1 },
   {
@@ -93,6 +97,7 @@ bookingSchema.index(
     partialFilterExpression: { stripeSessionId: { $type: 'string' } },
   },
 );
+
 bookingSchema.index(
   { stripePaymentIntentId: 1 },
   {
@@ -101,7 +106,10 @@ bookingSchema.index(
   },
 );
 
+// For the stale-pending sweeper
 bookingSchema.index({ status: 1, createdAt: 1 });
+// For the completion job (confirmed bookings whose trip has ended)
+bookingSchema.index({ status: 1, endDate: 1 });
 
 const Booking = mongoose.model('Booking', bookingSchema);
 

@@ -6,6 +6,7 @@ import { getStripe, expireCheckoutSession } from '../utils/stripe.js';
 import { runInTransaction } from '../utils/transaction.js';
 import { transitionBooking } from '../services/bookingService.js';
 import { queueRefund, processRefundRequest } from '../services/refundService.js';
+import { drainOutboxSafely } from '../services/outboxWorker.js';
 
 const CURRENCY = 'usd';
 
@@ -223,5 +224,6 @@ export const handleStripeWebhook = catchAsync(async (req, res) => {
     }
   }
 
+  await drainOutboxSafely();
   res.status(200).json({ received: true });
 });
