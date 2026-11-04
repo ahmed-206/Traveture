@@ -7,6 +7,8 @@ import Availability from '../models/availabilityModel.js';
 import { runInTransaction } from '../utils/transaction.js';
 import { planCancellationRefund, processRefundRequest, queueRefund } from './refundService.js';
 import { expireCheckoutSession } from '../utils/stripe.js';
+import { emitEvent } from './outboxService.js';
+import { drainOutboxSafely } from './outboxWorker.js';
 
 const VALID_STATUSES = Booking.schema.path('status').options.enum;
 const VALID_PAYMENT_STATUSES =
@@ -61,6 +63,29 @@ export const transitionBooking = async ({
       session,
     });
   }
+
+  const eventType = EVENT_FOR_STATUS[status];
+    const silent = status === 'cancelled' && SILENT_CANCEL_REASONS.has(set.cancellationReason);
+    if (eventType && !silent) {
+      await emitEvent(
+        {
+          key: `booking:${before._id}:${status}`,
+          type: eventType,
+          aggregateId: before._id,
+          payload: {
+            userId: before.user,
+            bookingId: before._id,
+            tourId: before.tour,
+            guests: before.guests,
+            startDate: before.startDate,
+            amountCents: set.amountPaidCents ?? before.amountPaidCents ?? null,
+            cancelledBy: set.cancelledBy ?? null,
+          },
+        },
+        session,
+      );
+    }
+  
   return before;
 };
 
@@ -116,6 +141,20 @@ const reserveSeats = async ({ tour, startDate, guests, session }) => {
     );
   }
 };
+
+const EVENT_FOR_STATUS = {
+  confirmed: 'BOOKING_CONFIRMED',
+  cancelled: 'BOOKING_CANCELLED',
+  completed: 'BOOKING_COMPLETED',
+};
+
+
+const SILENT_CANCEL_REASONS = new Set([
+  'checkout_expired',
+  'stale_pending',
+  'checkout_creation_failed',
+  'async_payment_failed',
+]);
 
 
 const findPendingBooking = (userId, tourId, startDate) =>
@@ -319,6 +358,23 @@ export const updateBookingService = async (bookingId, bodyData) => {
 
   validateBookingChange(current, filteredBody);
 
+   if (filteredBody.status && filteredBody.status !== current.status) {
+      await runInTransaction(async (session) => {
+        const before = await transitionBooking({
+          bookingId,
+          from: current.status,
+          status: filteredBody.status,
+          where: { paymentStatus: current.paymentStatus },
+          set: filteredBody.paymentStatus ? { paymentStatus: filteredBody.paymentStatus } : {},
+          session,
+        });
+        if (!before) {
+          throw new AppError('Booking was modified by another request. Please retry.', 409);
+        }
+      });
+      await drainOutboxSafely();
+      return Booking.findById(bookingId);
+    }
   // Guard on the state we validated against, so a concurrent change can't slip through
   const updated = await Booking.findOneAndUpdate(
     { _id: bookingId, status: current.status, paymentStatus: current.paymentStatus },

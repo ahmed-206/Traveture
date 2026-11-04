@@ -1,7 +1,9 @@
-import Booking from '../models/bookingModel.js';
+import Booking, { NO_POPULATE } from '../models/bookingModel.js';
 import RefundRequest from '../models/refundRequestModel.js';
 import AppError from '../utils/appError.js';
 import { getStripe, isRetryableStripeError } from '../utils/stripe.js';
+import { runInTransaction } from '../utils/transaction.js';
+import { emitEvent } from './outboxService.js';
 
 const DAY_MS = 24 * 60 * 60 * 1000;
 const MAX_REFUND_ATTEMPTS = 5;
@@ -58,33 +60,29 @@ export const queueRefund = async (
 
 
 export const processRefundRequest = async (requestId) => {
-
   const request = await RefundRequest.findOneAndUpdate(
     { _id: requestId, status: 'pending' },
     { $inc: { attempts: 1 } },
     { new: true },
   );
-  if (!request) return null; 
+  if (!request) return null; // already done or unknown
 
   const stripe = getStripe();
-  try {
+  let refund;
 
+  // ---- Phase 1: Stripe ----
+  try {
     const existing = await stripe.refunds.list({
       payment_intent: request.paymentIntentId,
       limit: 100,
     });
-
-
-
-    let refund = existing.data.find(
+    refund = existing.data.find(
       (r) =>
         r.metadata?.refundRequestId === String(request._id) &&
         !['failed', 'canceled'].includes(r.status),
     );
 
     if (!refund) {
-
-
       refund = await stripe.refunds.create(
         {
           payment_intent: request.paymentIntentId,
@@ -98,22 +96,6 @@ export const processRefundRequest = async (requestId) => {
         { idempotencyKey: `refund-${request._id}` },
       );
     }
-
- 
-
-    await RefundRequest.updateOne(
-      { _id: request._id },
-      { $set: { status: 'succeeded', stripeRefundId: refund.id, lastError: null } },
-    );
-
-    if (request.isBookingPayment) {
-      await Booking.findOneAndUpdate(
-        { _id: request.booking, paymentStatus: 'paid' },
-        { $set: { paymentStatus: 'refunded', refundedAmountCents: request.amountCents } },
-        { skipPopulate: true },
-      );
-    }
-    return refund;
   } catch (err) {
     const retryable = isRetryableStripeError(err) && request.attempts < MAX_REFUND_ATTEMPTS;
     await RefundRequest.updateOne(
@@ -124,6 +106,58 @@ export const processRefundRequest = async (requestId) => {
       `[Refund] ${request._id} failed (attempt ${request.attempts}, ${
         retryable ? 'will retry' : 'NEEDS MANUAL REVIEW'
       }): ${err.message}`,
+    );
+    return null;
+  }
+
+  // bookkeeping, atomic with the notification event 
+  try {
+    await runInTransaction(async (session) => {
+      await RefundRequest.updateOne(
+        { _id: request._id },
+        { $set: { status: 'succeeded', stripeRefundId: refund.id, lastError: null } },
+        { session },
+      );
+
+      if (request.isBookingPayment) {
+        await Booking.updateOne(
+          { _id: request.booking, paymentStatus: 'paid' },
+          { $set: { paymentStatus: 'refunded', refundedAmountCents: request.amountCents } },
+          { session },
+        );
+      }
+
+      const owner = await Booking.findById(request.booking)
+        .session(session)
+        .setOptions(NO_POPULATE);
+
+      if (owner) {
+        await emitEvent(
+          {
+            key: `refund:${request._id}:succeeded`,
+            type: 'REFUND_SUCCEEDED',
+            aggregateId: owner._id,
+            payload: {
+              userId: owner.user,
+              bookingId: owner._id,
+              tourId: owner.tour,
+              amountCents: request.amountCents,
+              currency: request.currency,
+              reason: request.reason,
+            },
+          },
+          session,
+        );
+      }
+    });
+    return refund;
+  } catch (err) {
+    console.error(
+      `[Refund] ${request._id} accepted by Stripe but bookkeeping failed (will retry): ${err.message}`,
+    );
+    await RefundRequest.updateOne(
+      { _id: request._id },
+      { $set: { lastError: `bookkeeping failed: ${err.message}` } },
     );
     return null;
   }
