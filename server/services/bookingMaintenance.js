@@ -1,6 +1,6 @@
-import { expireStalePendingBookings } from "./bookingService";
-import { processOutboxBatch } from "./outboxWorker";
-import { processPendingRefunds } from "./refundService";
+import { expireStalePendingBookings } from "./bookingService.js";
+import { processOutboxBatch } from "./outboxWorker.js";
+import { processPendingRefunds } from "./refundService.js";
 
 const step = async (name, fn) => {
   try {

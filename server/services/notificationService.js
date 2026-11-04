@@ -1,4 +1,4 @@
-import Notification, { NOTIFICATION_TTL_MS } from '../models/notifications/notificationModel';
+import Notification, { NOTIFICATION_TTL_MS } from '../models/notifications/notificationModel.js';
 import Tour from '../models/tourModel.js';
 
 const money = (cents, currency = 'usd') =>
