@@ -7,6 +7,7 @@ import tourRoutes from './routes/tourRoutes.js';
 import reviewRoutes from './routes/reviewRoutes.js';
 import favoriteRoutes from './routes/favoriteRoutes.js';
 import bookingRoutes from './routes/bookingRoutes.js';
+import notificationRoutes from './routes/notificationRoutes.js';
 import statsRoutes from './routes/statsRoutes.js';
 import jobsRoutes from './routes/jobsRoutes.js';
 import path from 'path';
@@ -60,6 +61,7 @@ app.use('/api/v1/tours', tourRoutes);
 app.use('/api/v1/reviews', reviewRoutes);
 app.use('/api/v1/favorites', favoriteRoutes);
 app.use('/api/v1/bookings', bookingRoutes);
+app.use('/api/v1/notifications', notificationRoutes);
 app.use('/api/v1/stats', statsRoutes);
 app.use('/api/v1/internal/jobs', jobsRoutes);
 app.all('/{*any}', (req, res, next) => {

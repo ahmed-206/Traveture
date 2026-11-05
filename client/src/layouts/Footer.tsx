@@ -1,3 +1,4 @@
+import { Link } from "react-router-dom";
 import {
   FaFacebookF,
   FaInstagram,
@@ -41,25 +42,25 @@ const Footer = () => {
 
               <ul className="space-y-3 text-white/60 font-medium">
                 <li className="hover:translate-x-1 transition-all duration-300">
-                  <a href="#">
+                  <a href="/">
                     Home
                   </a>
                 </li>
 
                 <li className="hover:translate-x-1 transition-all duration-300">
-                  <a href="#" >
+                  <a href="/#destinations">
                     Destinations
                   </a>
                 </li>
 
                 <li className="hover:translate-x-1 transition-all duration-300">
-                  <a href="#">
+                  <Link to="/tours">
                     Tours
-                  </a>
+                  </Link>
                 </li>
 
                 <li className="hover:translate-x-1 transition-all duration-300">
-                  <a href="#">
+                  <a href="/#about">
                     About
                   </a>
                 </li>

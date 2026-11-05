@@ -28,11 +28,11 @@ export const LoginPage = () => {
   };
 
   return (
-    <div className="min-h-screen w-full bg-[#E5E7EB] flex items-center justify-center p-4">
+    <div className="min-h-screen w-full bg-primary flex items-center justify-center p-4">
       {/* Login Card */}
       <div className="bg-white rounded-card shadow-sm w-full max-w-md p-8 sm:p-12 text-center mt-8">
         <h1 className="text-3xl font-bold text-primary">Welcome Back</h1>
-        <p className="text-body text-sm mt-1 mb-8">Log into your account</p>
+        <p className="text-secondary text-sm mt-1 mb-8">Log into your account</p>
 
         <form onSubmit={handleSubmit(onSubmit)} className="text-left space-y-5">
           <Input

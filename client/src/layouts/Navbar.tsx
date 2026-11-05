@@ -11,8 +11,10 @@ import {
   FaLocationDot,
   FaCompass,
   FaCircleInfo,
+  FaBell,
 } from "react-icons/fa6";
 import { getUserImageUrl } from "../utils/getImageUrl";
+import { NotificationDropdown } from "../features/notifications/components/NotificationDropdown";
 
 const Navbar = () => {
   const [isScrolled, setIsScrolled] = useState(false);
@@ -96,6 +98,7 @@ const Navbar = () => {
                   <FaHeart size={18} className={isScrolled ? "text-primary" : "text-white"} />
                 </div>
               </Link>
+              <NotificationDropdown isScrolled={isScrolled} />
               <Link to="/profile">
                 <img
                   src={getUserImageUrl(user.photo)}
@@ -198,6 +201,15 @@ const Navbar = () => {
               >
                 <FaHeart size={20} className="text-body shrink-0" />
                 <span>Favourites</span>
+              </Link>
+
+              <Link
+                to="/profile/notifications"
+                onClick={closeMobileMenu}
+                className="flex items-center gap-3 text-body hover:text-primary py-1 transition-colors"
+              >
+                <FaBell size={20} className="text-body shrink-0" />
+                <span>Notifications</span>
               </Link>
 
               <Link

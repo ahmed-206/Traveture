@@ -6,47 +6,47 @@ const Destinations = () => {
       id: 1,
       title: "Aswan",
       imageSrc:
-        "img/city/aswan.jpg",
+        "img/city/aswan.png",
       desc: "Experience the serene majesty of the Nile.",
     },
     {
       id: 2,
       title: "Giza",
       imageSrc:
-        "img/city/giza.jpeg",
+        "img/city/giza.png",
       desc: "Marvel at the ultimate ancient world wonders.",
     },
     {
       id: 3,
       title: "Alexandria",
       imageSrc:
-        "img/city/alex.jpg",
+        "img/city/alex.png",
       desc: "Gaze upon historical beautiful seaside ports.",
     },
     {
       id: 4,
       title: "Sharm el Sheikh",
       imageSrc:
-        "img/city/sharm.jpg",
+        "img/city/sharm.png",
       desc: "Discover majestic temples and royal tombs.",
     },
     {
       id: 5,
       title: "Dahab",
       imageSrc:
-        "img/city/dahab.jpg",
+        "img/city/dahab.png",
       desc: "Immerse yourself in bustling historic streets.",
     },
     {
       id: 6,
       title: "Luxor",
       imageSrc:
-        "img/city/luxor.jpg",
+        "img/city/luxor.png",
       desc: "Dive into turquoise waters and red sea bays.",
     },
   ];
   return (
-    <section className="pt-24 pb-24 px-6 bg-neutral-bg">
+    <section id="destinations" className="pt-24 pb-24 px-6 bg-neutral-bg">
       <div className="max-w-300 mx-auto">
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-12 gap-6">
           <h2 className="text-4xl font-bold font-headings text-heading mt-3 tracking-tight">

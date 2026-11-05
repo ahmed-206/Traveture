@@ -2,7 +2,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { FaCalendarDays, FaLocationDot } from "react-icons/fa6";
-import { FaSearch } from "react-icons/fa";
+import { FaArrowDown } from "react-icons/fa6";
 import { DESTINATIONS } from "../../features/tours/constants/filters";
 
 const Hero = () => {
@@ -23,7 +23,7 @@ const Hero = () => {
   return (
     <section
       className="relative  ml-[calc(-50vw+50%)] min-h-screen bg-cover bg-center flex flex-col justify-center items-center text-center px-6 text-white  z-10"
-      style={{ backgroundImage: `url('/img/cover.png')` }}
+      style={{ backgroundImage: `url('/img/SkySphinx.png')` }}
     >
       {/* Content */}
       <div className="relative z-10 max-w-225 px-4">
@@ -38,73 +38,78 @@ const Hero = () => {
       </div>
 
       {/* Search */}
-      <div className="absolute bottom-0 left-1/2 -translate-x-1/2 translate-y-1/2 w-full max-w-3xl px-6 z-10">
-        <form
-          onSubmit={handleSearch}
-          className="w-full bg-white  pl-6 rounded-input shadow-xl flex items-stretch justify-between overflow-hidden"
+     <div className="absolute bottom-0 -translate-5 rounded-2xl bg-white py-6 px-4 w-full max-w-3xl z-10">
+  <form
+    onSubmit={handleSearch}
+    className="flex items-end gap-3 w-full"
+  >
+    {/* Location Input Group */}
+    <div className="flex-1 flex flex-col gap-1.5">
+      <label className="text-body font-semibold text-start text-sm">
+        Location
+      </label>
+      <div className="relative bg-[#DEDEE0]/50 transition-colors rounded-lg px-4 py-2.5 flex items-center justify-between cursor-pointer">
+        <div className="flex items-center gap-2.5 min-w-0 pr-2">
+          <FaLocationDot className="text-primary" />
+          <span className="text-body/50 text-base font-normal truncate">
+            {destination || "Add Location"}
+          </span>
+        </div>
+        <FaArrowDown className="text-primary text-sm" />
+
+        <select
+          value={destination}
+          onChange={(e) => setDestination(e.target.value)}
+          className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
         >
-          {/* Destination Dropdown */}
-          <div className="relative flex-1 flex flex-col items-center justify-center px-4 py-2 cursor-pointer hover:bg-gray-50 rounded-xl transition-colors">
-            <FaLocationDot className="text-body mb-1" size={24} />
-            <span className="text-body font-bold text-sm md:text-sm leading-tight">
-              Destination
-            </span>
-            <span className="text-body text-xs md:text-sm font-light leading-tight mt-0.5 truncate max-w-35">
-              {destination || "add destination"}
-            </span>
-
-            <select
-              value={destination}
-              onChange={(e) => setDestination(e.target.value)}
-              className="absolute inset-0 w-full h-full opacity-0 cursor-pointer text-gray-800"
-            >
-              <option value="">
-                Select destination
-              </option>
-              {DESTINATIONS.map((dest) => (
-                <option key={dest} value={dest}>
-                  {dest}
-                </option>
-              ))}
-            </select>
-          </div>
-
-          {/* Divider */}
-          <div className="h-10 w-px bg-gray-300 shrink-0 mx-1 my-auto" />
-
-          {/* Date Picker */}
-          <div className="relative flex-1 flex flex-col items-center justify-center px-4 py-2 cursor-pointer hover:bg-gray-50 rounded-xl transition-colors">
-            <FaCalendarDays className="text-body mb-1" size={24} />
-            <span className="text-body font-bold text-sm md:text-sm leading-tight">
-              Date
-            </span>
-            <span className="text-body text-xs md:text-sm font-light leading-tight mt-0.5">
-              {date
-                ? new Date(date).toLocaleDateString("en-US", {
-                    month: "short",
-                    day: "numeric",
-                    year: "numeric",
-                  })
-                : "add date"}
-            </span>
-            <input
-              type="date"
-              value={date}
-              onChange={(e) => setDate(e.target.value)}
-              className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
-            />
-          </div>
-
-          {/* Search Button */}
-          <button
-            type="submit"
-            className="shrink-0 p-6 bg-primary hover:bg-primary-700 text-white  transition-all duration-200 shadow-sm flex items-center justify-center cursor-pointer ml-2 hover:scale-105"
-            aria-label="Search"
-          >
-            <FaSearch size={24} />
-          </button>
-        </form>
+          <option value="" className="text-body">Select location</option>
+          {DESTINATIONS.map((dest) => (
+            <option key={dest} value={dest} className="text-body">
+              {dest}
+            </option>
+          ))}
+        </select>
       </div>
+    </div>
+
+    {/* Date Input Group */}
+    <div className="flex-1 flex flex-col gap-1.5">
+      <label className="text-body text-start font-semibold text-sm">
+        Date
+      </label>
+      <div className="relative bg-[#DEDEE0]/50 transition-colors rounded-lg px-4 py-2.5 flex items-center justify-between cursor-pointer">
+        <div className="flex items-center gap-2.5 min-w-0 pr-2">
+          <FaCalendarDays className="text-primary" />
+          <span className="text-body/50 text-base font-normal truncate">
+            {date
+              ? new Date(date).toLocaleDateString("en-US", {
+                  month: "short",
+                  day: "numeric",
+                  year: "numeric",
+                })
+              : "Add Date"}
+          </span>
+        </div>
+        <FaArrowDown className="text-primary text-sm" />
+
+        <input
+          type="date"
+          value={date}
+          onChange={(e) => setDate(e.target.value)}
+          className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+        />
+      </div>
+    </div>
+
+    {/* Discover Button */}
+    <button
+      type="submit"
+      className="bg-primary text-white font-bold text-lg px-4 py-2 rounded-lg transition-all shadow-sm shrink-0 cursor-pointer"
+    >
+      Discover
+    </button>
+  </form>
+</div>
     </section>
   );
 };

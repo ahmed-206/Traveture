@@ -26,7 +26,7 @@ export const SignupPage = () => {
   };
 
   return (
-    <div className="min-h-screen w-full bg-[#E5E7EB] flex items-center justify-center p-4">
+    <div className="min-h-screen w-full bg-primary flex items-center justify-center p-4">
       {/* Signup Card */}
       <div className="bg-white rounded-card shadow-sm w-full max-w-md p-8 sm:p-12 text-center mt-8">
         <h1 className="text-3xl font-bold text-primary mb-8">Create Account</h1>

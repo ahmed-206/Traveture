@@ -6,6 +6,7 @@ import {
   FaMapLocationDot,
   FaSuitcaseRolling,
   FaTicketSimple,
+  FaBell,
 } from "react-icons/fa6";
 
 export type UserRole = "user" | "guide" | "lead-guide" | "admin";
@@ -37,6 +38,11 @@ const myBookings: MenuItem = {
   label: "My Bookings",
   icon: FaSuitcaseRolling,
 };
+const notifications: MenuItem = {
+  to: "/profile/notifications",
+  label: "Notifications",
+  icon: FaBell,
+};
 
 const overview: MenuItem = {
   to: "/admin",
@@ -57,7 +63,7 @@ const manageBookings: MenuItem = {
 
 // Record<UserRole, ...> fails the build if a role has no menu.
 export const menuConfig: Record<UserRole, MenuSection[]> = {
-  user: [{ items: [settings, favorites, myBookings] }],
+  user: [{ items: [settings, favorites, myBookings, notifications] }],
   guide: [{ items: [settings] }],
   "lead-guide": [
     { items: [settings] },
@@ -67,4 +73,4 @@ export const menuConfig: Record<UserRole, MenuSection[]> = {
     { items: [settings] },
     { items: [overview, manageTours, manageBookings] },
   ],
-};
+};

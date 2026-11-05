@@ -8,7 +8,7 @@ const DestinationCard = ({ title, imageSrc }: DestinationCardProps) => {
    
       <>
     <div className="group relative overflow-hidden bg-white rounded-card   shadow-light hover:-translate-y-2 transition-all duration-300">
-      <div className="absolute inset-0 bg-primary/30 z-10" />
+      
       
       <div className="relative h-48 md:h-64 w-full overflow-hidden bg-primary-light flex items-center justify-center">
         
@@ -22,7 +22,6 @@ const DestinationCard = ({ title, imageSrc }: DestinationCardProps) => {
             }}
           />
         ) : (
-          // هذا يطابق تماماً الصورة السلكية الرمادية التي أرسلتها مع كلمة Image بالمنتصف
           <div className="absolute inset-0 bg-[#D8DBDE] flex items-center justify-center">
             <span className="text-2xl font-bold text-body/60 font-headings">Image</span>
           </div>
@@ -33,7 +32,7 @@ const DestinationCard = ({ title, imageSrc }: DestinationCardProps) => {
 
         
         <div className="absolute bottom-6 left-6 z-10">
-          <h3 className="text-xl font-bold font-headings text-white">
+          <h3 className="text-md bg-white rounded-full px-3 py-1.5 font-medium font-headings text-heading">
             {title}
           </h3>
         </div>

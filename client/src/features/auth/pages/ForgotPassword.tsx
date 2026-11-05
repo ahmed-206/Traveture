@@ -31,13 +31,13 @@ export const ForgotPassword = () => {
     return <EmailSentSuccess />
   }
   return (
-    <div className="min-h-screen bg-[#E5E7EB] flex items-center justify-center p-4 font-sans">
+    <div className="min-h-screen bg-primary flex items-center justify-center p-4 font-sans">
       <div className="w-full max-w-120 bg-white rounded-2xl shadow-sm p-8 sm:p-12 text-center">
         <h1 className="text-3xl font-bold text-primary mb-4 tracking-tight">
           Forgot Password
         </h1>
 
-        <p className="text-body text-sm leading-relaxed mb-8 px-2">
+        <p className="text-secondary text-sm leading-relaxed mb-8 px-2">
           Enter your email address and we'll send you a password reset link.
         </p>
 

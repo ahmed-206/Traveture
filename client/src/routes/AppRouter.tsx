@@ -25,6 +25,7 @@ import AdminToursList from "../features/admin/pages/AdminToursList";
 import AdminTourForm from "../features/admin/pages/AdminTourForm";
 import AdminBookingsList from "../features/admin/pages/AdminBookingsList";
 import MyBookingsPage from "../features/bookings/pages/MyBookingsPage";
+import NotificationsPage from "../features/notifications/pages/NotificationsPage";
 
 const router = createBrowserRouter([
   // Public site
@@ -53,6 +54,7 @@ const router = createBrowserRouter([
       { path: "profile/settings", element: <ProfileSettingsPage /> },
       { path: "profile/favorites", element: <Favorites /> },
       { path: "profile/bookings", element: <MyBookingsPage /> },
+      { path: "profile/notifications", element: <NotificationsPage /> },
 
       {
         path: "admin",
