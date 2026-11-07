@@ -7,14 +7,14 @@ import Tours from "../components/landing/Tours";
 
 const Home = () => {
   return (
-    <>
+    <main className="w-full overflow-x-hidden">
       <Hero />
       <Destinations />
       <Tours />
       <AboutUs />
       <ChooseUs />
       <Cta />
-    </>
+    </main>
   );
 };
 

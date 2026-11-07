@@ -42,7 +42,7 @@ const TourCard = ({ tour, isFavorite }: TourCardProps) => {
   };
 
   return (
-    <article className="w-87.5 overflow-hidden rounded-card bg-white shadow-[0_12px_30px_rgba(0,0,0,.08)] transition-all duration-300 hover:-translate-y-2 hover:shadow-[0_18px_40px_rgba(0,0,0,.12)]">
+    <article className="w-full max-w-sm mx-auto overflow-hidden rounded-card bg-white shadow-[0_12px_30px_rgba(0,0,0,.08)] transition-all duration-300 hover:-translate-y-2 hover:shadow-[0_18px_40px_rgba(0,0,0,.12)]">
       {/* Image */}
       <div className="relative h-55 overflow-hidden">
         <img
@@ -115,7 +115,7 @@ const TourCard = ({ tour, isFavorite }: TourCardProps) => {
 
           <Link
             to={`/tours/${tour._id}`}
-            className="cursor-pointer rounded-input bg-primary px-6 py-3 font-body text-[17px] font-semibold text-white transition-all duration-300 hover:bg-primary-700"
+            className="cursor-pointer rounded-input bg-primary px-4 sm:px-6 py-2.5 sm:py-3 font-body text-sm sm:text-base font-semibold text-white transition-all duration-300 hover:bg-primary-700 shrink-0 shadow-sm"
           >
             View details
           </Link>

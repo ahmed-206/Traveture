@@ -10,6 +10,7 @@ interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   loadingText?: string;
   icon?: ReactNode;
   fullWidth?: boolean;
+  fullWidthOnMobile?: boolean;
 }
 
 const variantClasses: Record<ButtonVariant, string> = {
@@ -26,9 +27,9 @@ const variantClasses: Record<ButtonVariant, string> = {
 };
 
 const sizeClasses: Record<ButtonSize, string> = {
-  sm: "py-1.5 px-3 text-xs rounded-lg",
-  md: "py-2.5 px-5 text-sm rounded-input",
-  lg: "py-3 px-8 text-base rounded-input",
+  sm: "py-1.5 px-3 text-xs rounded-lg min-h-[36px]",
+  md: "py-2 sm:py-2.5 px-3.5 sm:px-5 text-xs sm:text-sm rounded-input min-h-[40px] sm:min-h-[44px]",
+  lg: "py-2.5 sm:py-3 px-5 sm:px-8 text-sm sm:text-base rounded-input min-h-[44px] sm:min-h-[48px]",
 };
 
 export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
@@ -40,6 +41,7 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
       loadingText,
       icon,
       fullWidth = false,
+      fullWidthOnMobile = false,
       disabled,
       className = "",
       children,
@@ -49,13 +51,19 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
   ) => {
     const isDisabled = disabled || isLoading;
 
+    const widthClass = fullWidth
+      ? "w-full"
+      : fullWidthOnMobile
+      ? "w-full sm:w-auto"
+      : "";
+
     return (
       <button
         ref={ref}
         disabled={isDisabled}
-        className={`font-semibold transition duration-200 cursor-pointer inline-flex items-center justify-center gap-2 ${
+        className={`font-semibold transition duration-200 cursor-pointer inline-flex items-center justify-center gap-2 select-none touch-manipulation ${
           variantClasses[variant]
-        } ${sizeClasses[size]} ${fullWidth ? "w-full" : ""} ${
+        } ${sizeClasses[size]} ${widthClass} ${
           isDisabled ? "opacity-60 cursor-not-allowed" : ""
         } ${className}`}
         {...rest}
@@ -63,7 +71,7 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
         {isLoading ? (
           <>
             <svg
-              className="animate-spin h-4 w-4"
+              className="animate-spin h-4 w-4 shrink-0"
               xmlns="http://www.w3.org/2000/svg"
               fill="none"
               viewBox="0 0 24 24"
@@ -82,11 +90,11 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
                 d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"
               />
             </svg>
-            {loadingText || children}
+            <span>{loadingText || children}</span>
           </>
         ) : (
           <>
-            {icon && <span className="shrink-0">{icon}</span>}
+            {icon && <span className="shrink-0 flex items-center">{icon}</span>}
             {children}
           </>
         )}

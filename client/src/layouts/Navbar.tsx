@@ -233,7 +233,7 @@ const Navbar = () => {
                 disabled={isPending}
                 className="flex items-center gap-3 text-body hover:text-error py-1 transition-colors text-left w-full cursor-pointer"
               >
-                <FaArrowRightFromBracket size={20} className="text-body shrink-0" />
+                <FaArrowRightFromBracket size={20} />
                 <span>{isPending ? "Logging out..." : "Logout"}</span>
               </button>
             </>
