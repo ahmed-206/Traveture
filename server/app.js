@@ -1,6 +1,7 @@
 import express from 'express';
 import cors from 'cors';
 import morgan from 'morgan';
+import qs from 'qs';
 import cookieParser from 'cookie-parser';
 import userRoutes from './routes/userRoutes.js';
 import tourRoutes from './routes/tourRoutes.js';
@@ -20,14 +21,7 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const app = express();
 
-app.set('query parser', 'extended');
-
-// test ////////////////
-app.use((req, res, next) => {
-  console.log('Parsed Query:', JSON.stringify(req.query));
-
-  next();
-});
+app.set('query parser', (str) => qs.parse(str));
 
 app.use(express.static(path.join(__dirname, 'public')));
 if (process.env.NODE_ENV === 'development') {
@@ -39,13 +33,14 @@ const allowedOrigins = [
   'http://localhost:5173',
   process.env.CLIENT_URL,
   process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : null,
-  process.env.VERCEL_PROJECT_PRODUCTION_URL ? `https://${process.env.VERCEL_PROJECT_PRODUCTION_URL}` : null,
+  process.env.VERCEL_PROJECT_PRODUCTION_URL
+    ? `https://${process.env.VERCEL_PROJECT_PRODUCTION_URL}`
+    : null,
 ].filter(Boolean);
 
 app.use(
   cors({
     origin: (origin, callback) => {
-      
       if (!origin || allowedOrigins.includes(origin)) {
         callback(null, true);
       } else {
@@ -56,11 +51,10 @@ app.use(
   }),
 );
 
-
 app.post(
   '/api/v1/stripe/webhook',
   express.raw({ type: 'application/json' }),
-  handleStripeWebhook
+  handleStripeWebhook,
 );
 app.use(express.json());
 
