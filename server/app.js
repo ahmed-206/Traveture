@@ -22,6 +22,16 @@ const app = express();
 
 app.set('query parser', 'extended');
 
+// In serverless environments (like Vercel), req.query is pre-populated as a flat own-property,
+// which prevents Express's extended query parser (qs) getter from running. Deleting the own-property
+// allows Express's query parser to execute and properly handle nested queries (e.g., price[gte]).
+app.use((req, res, next) => {
+  if (Object.prototype.hasOwnProperty.call(req, 'query')) {
+    delete req.query;
+  }
+  next();
+});
+
 app.use(express.static(path.join(__dirname, 'public')));
 if (process.env.NODE_ENV === 'development') {
   app.use(morgan('dev'));
