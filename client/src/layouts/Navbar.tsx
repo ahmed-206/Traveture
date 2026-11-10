@@ -39,7 +39,7 @@ const Navbar = () => {
     <nav
       className={`fixed top-0 left-0 w-full z-30 transition-all duration-300 ${
         isScrolled
-          ? "py-3 bg-white/95 backdrop-blur-md shadow-md border-b border-gray-100 text-primary"
+          ? "py-3 bg-white/95 backdrop-blur-md shadow-md border-b border-gray-100 text-heading"
           : "py-4 bg-transparent text-white"
       }`}
     >
@@ -58,7 +58,7 @@ const Navbar = () => {
           <Link
             to="/"
             className={`border-b-2 border-transparent pb-1 transition-all ${
-              isScrolled ? "hover:border-primary hover:text-primary-700" : "hover:border-white"
+              isScrolled ? " hover:text-primary" : "hover:border-white"
             }`}
           >
             Home
@@ -66,7 +66,7 @@ const Navbar = () => {
           <a
             href="#destinations"
             className={`border-b-2 border-transparent pb-1 transition-all ${
-              isScrolled ? "hover:border-primary hover:text-primary-700" : "hover:border-white"
+              isScrolled ? " hover:text-primary" : "hover:border-white"
             }`}
           >
             Destinations
@@ -74,7 +74,7 @@ const Navbar = () => {
           <Link
             to="tours"
             className={`border-b-2 border-transparent pb-1 transition-all ${
-              isScrolled ? "hover:border-primary hover:text-primary-700" : "hover:border-white"
+              isScrolled ? " hover:text-primary" : "hover:border-white"
             }`}
           >
             Tours
@@ -82,7 +82,7 @@ const Navbar = () => {
           <a
             href="#about"
             className={`border-b-2 border-transparent pb-1 transition-all ${
-              isScrolled ? "hover:border-primary hover:text-primary-700" : "hover:border-white"
+              isScrolled ? " hover:text-primary" : "hover:border-white"
             }`}
           >
             About Us
@@ -109,11 +109,11 @@ const Navbar = () => {
               <button
                 onClick={() => logout()}
                 disabled={isPending}
-                className="cursor-pointer transition-transform hover:scale-105"
+                className="cursor-pointer transition-transform hover:scale-105 "
                 title="Logout"
               >
-                <div className="p-2 rounded-full bg-body/20 backdrop-blur-md">
-                  <FaArrowRightFromBracket size={18} className={isScrolled ? "text-primary" : "text-white"} />
+                <div className="p-2 rounded-full bg-body/20 backdrop-blur-md hover:text-red-500">
+                  <FaArrowRightFromBracket size={18} className={isScrolled ? "text-primary hover:text-red-500" : "text-white hover:text-red-500"} />
                 </div>
               </button>
             </div>
