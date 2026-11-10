@@ -21,8 +21,19 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const app = express();
 
-app.set('query parser', (str) => qs.parse(str));
+app.set('query parser', 'extended');
 
+app.use((req, res, next) => {
+  const i = req.originalUrl.indexOf('?');
+  const parsed = qs.parse(i === -1 ? '' : req.originalUrl.slice(i + 1));
+  Object.defineProperty(req, 'query', {
+    value: parsed,
+    writable: true,
+    configurable: true,
+    enumerable: true,
+  });
+  next();
+});
 app.use(express.static(path.join(__dirname, 'public')));
 if (process.env.NODE_ENV === 'development') {
   app.use(morgan('dev'));
